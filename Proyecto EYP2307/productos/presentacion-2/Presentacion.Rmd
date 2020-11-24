@@ -1,0 +1,582 @@
+---
+title: "Proyecto EYP2307 - Análisis de Regresión"
+author: "Eduardo Vásquez, Maite Vergara, Felipe Moya, Christopher Weber"
+date: "27-09-2020"
+output:
+  xaringan::moon_reader:
+    css: 
+      - xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+options(htmltools.dir.version = FALSE)
+library(xaringanthemer)
+style_mono_light(base_color = "#3b5998")
+
+library(readr)
+library(tidyverse)
+```
+
+class: inverse
+
+```{r, echo=FALSE, out.width = "400px", out.height="135px", fig.align='left.top'}
+knitr::include_graphics("./productos/presentacion-2/Presentacion_files/logouc.png")
+```
+
+.center[
+  ### ‎
+  # Número de Comparticiones en Redes Sociales - Avance 2
+]
+
+.footnote[
+  Integrantes: Eduardo Vásquez, Maite Vergara, Christopher Weber, Felipe Moya
+]
+
+---
+class: inverse, center, middle
+
+# Problemática
+
+---
+
+## Predicción de la popularidad de noticias
+
+```{r, echo=FALSE, out.width = "600px", out.height="400px", fig.align='center', fig.pos='p', fig.cap="Página inicio Mashable.com (2015)"}
+knitr::include_graphics("productos/presentacion-2/Presentacion_files/mashable.jpg")
+```
+
+---
+
+## Problemáticas primer avance
+
+<br>
+- Variables poco correlacionadas con la variable respuesta
+
+--
+
+<br> 
+- Gran cantidad de puntos de influencia y outliers
+
+--
+
+<br>
+- Gran cantidad de parámetros
+
+---
+class: inverse, center, middle
+
+# Propuestas de Modelos
+
+---
+
+## Eliminación de variables
+
+- Variables *día de la semana* y *fin de semana*
+
+--
+
+- Problemas de multicolinealidad alta
+
+
+| Variables| VIF |
+| :------- | :------: |
+| LDA_03 | $9.8\cdot10^8$ |
+| n_unique_tokens| $13431.6$ |
+|n_non_stop_words| $2073.7$|
+|self_reference_avg_shares| $19.1$ |
+|rate_positive_words| $17.92$ |
+|kw_max_min| $11.1$ |
+
+- Quedamos entonces con 40 variables explicativas
+
+---
+
+## Propuesta de Modelos
+
+- Modelo completo
+
+--
+
+- Modelo completo sin las variables categóricas
+
+--
+
+- Modelo utilizado en el avance anterior 
+
+```{r modelo_simple, message=FALSE, echo=FALSE, fig.align='center', warning=FALSE, fig.height=5, fig.width=9}
+knitr::include_graphics("figuras/01_regresion-simple.png")
+```
+
+---
+
+## Selección Automática de Modelos
+
+--
+
+.left-column[- Forward
+
+- Backward
+
+- Stepwise
+]
+--
+
+.right-column[
+Nombre de la variable  | []() |
+------|------|
+kw_avg_avg | tipo_noticia |
+self_reference_min_shares | num_hrefs |
+kw_max_avg | kw_min_avg |
+kw_min_min | avg_negative_polarity |
+n_tokens_title | average_token_length |
+global_subjectivity | kw_min_max |
+LDA_02 | num_self_hrefs |
+dia_de_la_semana | n_tokens_content |
+self_reference_max_shares | global_rate_positive_words |
+min_positive_polarity | num_keywords |
+abs_title_sentiment_polarity | abs_title_subjectivity |
+]
+
+---
+
+## Elección del Modelo
+
+- Vemos una tabla con los valores de AIC, BIC, y el coeficiente de determinación ajustado para
+cada modelo
+
+| Modelo |   AIC   |   BIC   | $\text{R}^2$ ajustado | 
+|:------:|:--------|:-------:|:---------------|
+| Completo 1 | 853914.1 | 854360.7 | 0.02158 |
+| Completo 2 | 853932.9 | 854276.4 | 0.02082 |
+| Avance 1   | 854244.9 | 854270.7 | 0.01217 |
+| Forward    | **853889.9** | **854181.9** | **0.02174** |
+| Backward   | **853889.9** | **854181.9** | **0.02174** |
+| Stepwise   | **853889.9** | **854181.9** | **0.02174** |
+
+--
+
+- Nos quedamos entonces con el modelo obtenido por selección automática, usando 22 variables
+explicativas
+
+---
+class: inverse, center, middle
+
+# Supuestos
+
+---
+
+## Normalidad
+
+- Vemos si se cumple el supuesto a través de gráficos
+
+- Histograma:
+
+```{r, echo=FALSE, out.width = "650px", out.height="400px", fig.align='center', fig.pos='p'}
+knitr::include_graphics("figuras/02_histograma-supuestos.png")
+```
+
+---
+
+## Normalidad
+
+- Vemos si se cumple el supuesto a través de gráficos
+
+- QQPlot:
+
+```{r, echo=FALSE, out.width = "650px", out.height="400px", fig.align='center', fig.pos='p'}
+knitr::include_graphics("figuras/03_qqplot-supuestos.png")
+```
+
+---
+
+## Normalidad
+
+<br>
+
+- Usando tests
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:---------------:|:------------|
+|Kolmogorov-Smirnov| 0.31841 | < 2.2e-16 |
+|Jarque-Bera       | 4.161e+13 | < 2.2e-16 |
+
+<br>
+
+- No podemos concluir normalidad
+
+---
+
+## Independencia y Homocedasticidad
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.9965   |  0.6957   |
+
+<br>
+
+--
+
+- Homocedasticidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Breusch-Pagan | 77.045   |  1.39e-05   |
+
+<br>
+
+--
+
+- Solo podemos concluir autocorrelación 0 a un paso
+
+---
+
+## Transformación de Box-Cox
+
+- Obtenemos un valor de lambda óptimo $\lambda=-0.1413983$.
+
+```{r grafico boxcox, echo=FALSE, out.width = "700px", out.height="400px", fig.align='center', fig.pos='p'}
+knitr::include_graphics("figuras/04_box-cox.png")
+```
+
+---
+
+## Transformación de Box-Cox
+
+<br>
+
+- Nuestro nuevo modelo en comparación con el anterior:
+
+| Modelo   |   AIC   |   BIC   |   $\text{R}^2$   |
+|:--------:|:--------|:--------|:-----------------|
+| Antiguo  |  853889.9  | 854181.9 | 0.02174 |
+| Nuevo    |  14102.1  | 14394.1 | 0.125   |
+
+<br>
+
+- Vemos que AIC y BIC disminuyen drásticamente
+
+---
+
+## Supuestos usando Box-Cox
+
+- Normalidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Kolmogorov-Smirnov | 0.071626 | < 2.2e-16 |
+| Jarque-Bera   |   38522   | < 2.2e-16 |
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.942  |  6.005e-09  |
+
+- Homocedasticidad 
+
+|   Test   |   Estadístico   | Valor p   |
+|:--------:|:----------------|:----------|
+| Bresuch-Pagan | 651.26    |  < 2.2e-16 |
+
+---
+
+## Análisis de Puntos de Influencia
+
+- Nuestro modelo cuenta con originalmente 39644 observaciones
+
+--
+
+- DFFITS: 571 observaciones indicadas como puntos de influencia
+
+```{r grafico DFFITS, echo=FALSE, out.width = "700px", out.height="400px", fig.align='center', fig.pos='p'}
+knitr::include_graphics("figuras/05_DFFITS.png")
+```
+
+---
+
+## Análisis de Puntos de Influencia
+
+- Distancia de Cook
+
+```{r grafico distancia cook, echo=FALSE, out.width = "700px", out.height="400px", fig.align='center', fig.pos='p'}
+knitr::include_graphics("figuras/06_distancia-Cook.png")
+```
+
+---
+
+## Análisis de Puntos de Influencia
+
+- COVRATIO: 1575 observaciones indicadas como puntos de influencia
+
+```{r grafico COVRATIO, echo=FALSE, out.width = "700px", out.height="400px", fig.align='center', fig.pos='p'}
+knitr::include_graphics("figuras/07_COVRATIO.png")
+```
+
+
+---
+
+## Supuestos sin puntos de influencia
+
+- Eliminamos un total de 464 observaciones
+
+--
+
+<br>
+
+- Nuestro nuevo modelo en comparación con el original:
+
+| Modelo   |   AIC   |   BIC   |   $\text{R}^2$   |
+|:--------:|:--------|:--------|:-----------------|
+| Antiguo  |  853889.9  | 854181.9 | 0.02174 |
+| Nuevo    |  751267.1  | 751558.7 | 0.07687   |
+
+---
+
+## Supuestos sin puntos de influencia
+
+- Normalidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Kolmogorov-Smirnov | 0.24413 | < 2.2e-16 |
+| Jarque-Bera   |   14125114  | < 2.2e-16 |
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.9685 |  0.001611 |
+
+- Homocedasticidad 
+
+|   Test   |   Estadístico   | Valor p   |
+|:--------:|:----------------|:----------|
+| Bresuch-Pagan | 1174    |  < 2.2e-16 |
+
+---
+
+## Última opción: Box-Cox nuevamente
+
+- Obtenemos un valor de lambda igual a $\lambda = -0.09960017$
+
+<br>
+
+--
+
+- Nuestro modelo en comparación con el original con y sin puntos de influencia
+
+| Modelo   |   AIC   |   BIC   |   $\text{R}^2$   |
+|:--------:|:--------|:--------|:-----------------|
+| Antiguo con ptos. de influencia |  853889.9  | 854181.9 | 0.02174 |
+| Antiguo sin ptos. de influencia |  751267.1  | 751558.7 | 0.07687   |
+| Nuevo, usando Box-Cox | 34615.55 | 34907.13 | 0.1333 |
+
+---
+
+## Última verificación de supuestos
+
+- Normalidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Kolmogorov-Smirnov | 0.071139 | < 2.2e-16 |
+| Jarque-Bera   |   17080  | < 2.2e-16 |
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.9308 | 5.661e-12 |
+
+- Homocedasticidad 
+
+|   Test   |   Estadístico   | Valor p   |
+|:--------:|:----------------|:----------|
+| Bresuch-Pagan | 489.8    |  < 2.2e-16 |
+
+---
+
+class: inverse, center, middle
+
+# Método Alternativo
+
+---
+
+## LASSO Regression
+
+- LASSO: Least Absolute Shrinkage and Selection Operator
+
+--
+
+
+- Se desea minimizar lo siguiente:
+
+$$
+\begin{aligned}
+&\sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^{p-1} \beta_j x_{ij}\right)^2+ \lambda\sum_{j=1}^p |\beta_j| \\
+=& \; \text{RSS} + \lambda\sum_{j=1}^p |\beta_j|
+\end{aligned}
+$$
+
+<br>
+
+--
+
+- Cuando $\lambda$ es lo suficientemente grande, la penalización $\ell_1$ tiene el efecto 
+de forzar algunos coeficentes a ser exactamente 0
+
+---
+
+## LASSO Regression
+
+- La minimización anterior puede ser escrita de manera equivalente como:
+
+$$
+\begin{aligned}
+\text{minimizar}\left\{ \sum_{i=1}^n \left( y_i - \beta_0 - \sum_{j=1}^{p-1}\beta_jx_{ij} \right)^2  \right\} \quad \text{sujeto a } \quad \sum_{j=1}^p |\beta_j| \leq s
+\end{aligned}
+$$
+
+--
+
+```{r grafico lasso, echo=FALSE, out.width = "700px", out.height="320px", fig.align='center', fig.pos='p'}
+knitr::include_graphics(here::here("figuras", "08_figura-lasso-regression.jpg"))
+```
+
+---
+
+## Ventajas
+
+- Obtención de estimaciones iguales a cero
+
+<br>
+
+--
+
+- La contracción puede disminuir significantemente la varianza de nuestros estimadores
+
+<br>
+
+--
+
+- Obtención de modelos más simples de interpretar
+
+<br>
+
+--
+
+- Presenta menos problemas con variables altamente correlacionadas
+
+---
+
+## Desventajas
+
+- Estimación de $\lambda$
+
+<br>
+
+--
+
+- La disminución de la varianza viene con el precio de aumento de sesgo
+
+<br>
+
+--
+
+- La inferencia posterior es más compleja de realizar
+
+---
+
+## Ajuste del modelo utilizando LASSO
+
+- La librería que nos permite usar LASSO es `glmnet`
+
+- Vemos la contracción de parámetros a través de un gráfico:
+
+```{r grafico coeficientes lasso, echo=FALSE, out.width = "700px", out.height="400px", fig.align='center', fig.pos='p'}
+knitr::include_graphics(here::here("figuras", "09_evolucion-parametros-lambda.png"))
+```
+
+---
+
+## Ajuste del modelo utilizando LASSO
+
+- Utilizamos validación cruzada para encontrar el valor óptimo de lambda:
+
+```{r grafico lambda, echo=FALSE, out.width = "700px", out.height="370px", fig.align='center', fig.pos='p'}
+knitr::include_graphics(here::here("figuras", "10_lambda-optimo.png"))
+```
+
+--
+
+- Obtenemos un valor óptimo de $\lambda = 28.48036$
+
+---
+
+## Ajuste del modelo utilizando LASSO
+
+- Teniendo el lambda óptimo, buscamos las estimaciones de los coeficientes
+
+Nombre de la variable  | []() | []() |
+------|------|-------|
+n_tokens_title | n_tokens_content |avg_positive_polarity |
+num_hrefs | num_self_hrefs |min_positive_polarity |
+num_imgs | num_videos |avg_negative_polarity |
+average_token_length | num_keywords | max_negative_polarity |
+kw_min_min | kw_max_min |title_sentiment_polarity |
+kw_min_max | kw_max_max | abs_title_subjectivity |
+kw_min_avg | kw_max_avg | abs_title_sentiment_polarity |
+kw_avg_avg | self_reference_min_shares | dia_de_la_semana |
+self_reference_max_shares | LDA_00 | tipo_noticia
+LDA_01 | LDA_02 | |
+global_subjectivity | global_rate_positive_words | |
+
+---
+
+## Comparación
+  
+- Calculamos el $\text{R}^2$ ajustado para nuestro modelo usando LASSO, y comparamos 
+con nuestro mejor modelo:
+
+|   Modelo   |   Número de variables   |   $\text{R}^2$ ajustado   | AIC | BIC |
+|:----------:|:------------------------|:--------------------------|:----|:----|
+| Forward + Box-Cox - Outliers | 22 | **0.1333** |  34615.55  |  34907.13  |
+| Forward + Box-Cox | 22 | 0.125 | **14102.1** | **14394.1** |
+| Forward    |  22  |  0.02174  | 853889.9 |  854181.9
+| LASSO    | 32  | 0.02151115 | 853895.6 | 854264.9 |
+
+
+---
+
+class: inverse, center, middle
+
+# Conclusión
+
+---
+
+class: center, middle
+
+# Referencias
+
+*K. Fernandes, P. Vinagre and P. Cortez. A Proactive Intelligent Decision Support System for Predicting the Popularity of Online News. Proceedings of the 17th EPIA 2015 - Portuguese Conference on Artificial Intelligence, September, Coimbra, Portugal.*
+
+
+
+
+
+
+
+
+
+
+
+
+

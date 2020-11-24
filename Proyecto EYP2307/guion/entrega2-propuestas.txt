@@ -1,0 +1,24 @@
+- Entonces, en cuanto a la propuesta de modelos, recordemos que nuestra base de datos está compuesta por 47 variables explicativas, donde 44 son 
+numéricas y 3 son categóricas, correspondientes a día de la semana, fin de semana y tipo de noticia.
+
+Uno de los primeros problemas que presentaba nuestra base de datos era la existencia de estas
+variables *dia de la semana* y *fin de semana*, donde ambas están perfectamente correlacionadas. Es 
+por esto que tuvimos que eliminar una de estas de nuestra base de datos y decidimos eliminar *fin de semana*. Esto provoca que tengamos que estimar más parámetros si la variable es incluida en nuestro modelo, pero no perdemos información sobre el día exacto en que se publicó el artículo. Además, probamos con los dos modelos, y usando *dia de la semana* resultó ser mejor en el análisis posterior.
+
+Luego de eso, eliminamos todas las variables que presentaban un mayor problema de multicolinealidad con 
+las demás, ocupando el criterio del factor de inflación de la varianza, usando un valor de corte de 10.
+Las variables eliminadas están en la siguiente tabla, ordenados según el orden en que fueron eliminadas, junto a sus valores de VIF, notando que habían algunos extremadamente altos. Esto era de esperarse
+ya que muchas variables de la base de datos parecían estar relacionadas entre sí, al medir características similares.
+
+Luego, con las 40 variables explicativas restantes ajustamos tres modelos de referencia, los cuales 
+nos servirán para comparar modelos en el momento que hagamos una selección automática.
+En primer lugar, el primer modelo que ajustamos fue el modelo completo,
+con las 40 variables. El segundo modelo propuesto fue el modelo completo, pero sin las variables categóricas dia de la semana y tipo de noticia, 
+  y, finalmente, el tercer modelo propuesto fue el que obtuvimos en la entrega anterior al momento de usar regresión lineal simple, utilizando la variable kw_avg_avg. Probamos también con diferentes transformaciones de variables explicativas, sin ningún éxito.
+
+Luego, dada la gran cantidad de variables que posee nuestra base de datos, es infeasible proponer modelos de manera manual dada la gran cantidad de combinaciones posibles, incluyendo posibles transformaciones de nuestras variables. Es por esto que debemos recurrir a algoritmos de selección automática de modelos, para así poder seleccionar el mejor subconjunto de variables explicativas posible. En nuestro caso, a traveś de los tres métodos forward, backward y stepwise obtenemos exactamente las mismas variables, donde el total de variables explicativas a usar baja a 22, e incluyen a ambas varibales categóricas dia de la semana y tipo de noticia.
+
+Una vez teniendo nuestros modelos elegidos por los algoritmos anteriores, que en nuestro caso 
+son exactamente el mismo, podemos hacer una comparación con los modelos propuestos de 
+manera manual, utilizando los criterios AIC, BIC, y el R^2 ajustado. En la tabla
+podemos notar que el modelo obtenido por la selección automática es superior a los demás, aunque no por tanto, y por tanto elegimos este modelo para seguir con el análisis.

@@ -1,0 +1,73 @@
+- Como método alternativo nos tocó LASSO, el cual significa Least Absolute Shrinkage and Selection
+Operator, u operador de selección y contracción mínima absoluta.
+
+Este método es una variación de la regresión lineal que conocemos, el cual introduce una 
+penalización, a través de lambda, al momento de realizar la minimización de la suma de errores cuadrados,
+esto es, el RSS que hemos utilizado en clases. La penalización que utiliza LASSO se denomina l1, 
+al utilizar esta norma para la penalización, la cual corresponde a la suma de los valores absolutos
+de los coeficientes.
+
+Notamos que si lambda es igual a 0, obtendríamos los mismos coeficientes que en la regresión 
+lineal, mientras que cuando lambda crece los coeficientes estimados tienden a cero. Además, no 
+solo los coefientes estimados tienden a cero, pero la penalización el1 tiene el efecto de 
+forzar algunos coeficientes a ser exactamente 0.
+
+¿Por qué LASSO regression nos puede entregar coeficientes iguales a cero? la respuesta es que 
+la minimización anterior puede ser escrita de manera equivalente como minimizar el RSS
+sujeto a una región del espacio en que deben estar nuestros coeficientes. Esto podemos entenderlo 
+mejor a través de la figura, donde a la izquierda tenemos la regresión LASSO, que utiliza la penalización el1,
+y a la derecha una modificación que utiliza el2. Beta gorro representa el estimador que minimiza el
+RSS, y las curvas rojas representan las curvas de nivel de RSS para cada par de beta.
+Así, LASSO regressión obtiene el par de coeficientes con menor RSS, pero sujeta a esta región en forma 
+de diamante. Es esta forma la que permite que la minimización pueda ocurrir justo en los ejes, como se ve en este caso,
+haciendo que algún coeficiente sea igual a cero, mientras que la penalización de la derecha no lo permite.
+
+Entre las ventajas de LASSO encontramos:
+
+1. Primero, como ya lo hemos dicho, tenemos que LASSO nos permite obtener estimaciones
+iguales a cero, por lo que además sirve como selector de variables.
+
+2. En segundo lugar, esta contracción puede disminuir significantemente la varianza de nuestros
+estimadores
+
+3. En tercer lugar, a raiz de la primera ventaja mencionada, los modelos obtanidos por LASSO son generalmente
+más simples de interpretar
+
+4. Finalmente, LASSO parece presentar menos problemas entre variables altamente correlacionadas,
+lo cual ocurre en nuestra base de datos.
+
+Y, entre las desventajas de LASSO tenemos que:
+
+1. Primero, se debe estimar también este valor de lambda a usar en nuestra penalización
+
+2. En segundo lugar, La disminución de la varianza mencionada en las ventajas viene con un precio, 
+y es el aumento de sesgo de nuestros estimadores
+
+3. Finalmente, pareciera ser que no hay un consenso sobre métodos estadísticamente válidos para
+calcular errores estándar para las estimaciones obtenidas, lo que dificulta la inferencia posterior
+
+Pasando al ajuste, vemos primero a través de un gráfico cómo LASSO en nuestro caso contrae los parámetros hacia cero cuando
+lambda crece, donde cada una de las líneas corresponde a las estimaciones por cada parámetro.
+
+Luego, debemos encontrar el valor de lambda óptimo, para lo cual dividimos nuestras observaciones en dos 
+conjuntos, uno de entrenamiento, correspondiente al 80% de las observaciones, y uno de prueba con las restantes.
+El conjunto de entrenamiento es entonces usado para encontrar el valor óptimo usando validación cruzada
+de 10 pliegues, obteniendo un valor óptimo de lambda de 28.48.
+
+Ya teniendo el valor óptimo de lambda, ajustamos nuestro modelo, obteniendo las estimaciones de
+nuestros coeficientes. En la tabla vemos las variables que LASSO nos da estimaciones distintas de cero,
+las cuales son un total de 31, por lo que hay 15 parámetros que fueron estimados como exactamente cero.
+
+Finalmente, vemos la comparación entre los diferentes modelos vistos a través de la presentación,
+donde también agregamos nuestro modelo utilizando LASSO, junto a sus valores de AIC, BIC y R2 ajustado.
+Notamos que nuestro modelo utilizando forward pareciera ser mejor que el modelo utilizando LASSO bajo
+nuestros criterios, obteniendo incluso una cantidad menor de variables a utilizar.
+
+En conclusión, podemos notar que ninguno de nuestros modelos pareciera ser bueno para estimaciones,
+donde incluso, como pudimos notar a través de la presentación, los supuestos no se cumplían. Esto nos
+lleva a pensar que estamos equivocados desde un inicio proponiendo el modelo de regresión que hemos
+usado a través del curso, donde quizás podríamos permitir varianza no constante, o errores asímetricos
+con colas más pesadas, como vimos en los problemas que teníamos con la normalidad. Creemos también 
+que se podría cambiar el enfoque a uno en donde nuestra variable respuesta sea categórica, 
+que indique si el artículo será popular o no, pensando por ejemplo que más de 10000 comparticiones
+es considerado popular, lo que nos ayuda a lidiar con los outliers extremadamente inusuales.

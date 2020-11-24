@@ -1,0 +1,16 @@
+- Recordemos que
+esta base de datos resume un conjunto de características acerca de artículos publicados por la página Mashable en un 
+periodo de dos años (2013-2014). El objetivo es poder predecir la popularidad de nuevos artículos publicados,
+esto es, la cantidad de veces que éste será compartido, a partir de las características dadas.
+Recordamos también que no solo interesa la predicción, si no que también el entender la relación existente
+entre variables explicativas y la variable respuesta, y cómo estas también interactúan entre sí.
+
+En este segundo avance implementaremos el modelo de regresión lineal múltiple, así como herramientas de selección de modelos para poder mejorar nuestro análisis anterior, y poder predecir de mejor manera nuestro objetivo: la cantidad de comparticiones de un artículo. Presentaremos también un método alternativo para finalmente realizar comparaciones.
+
+- Entre las problemáticas que tuvimos en el primer avance estuvieron:
+
+1.- Variables poco correlacionadas con la variable respuesta, por lo que un modelo de regresión lineal simple no era suficiente para nuestro caso, entregando malos resultados.
+
+2.- En segundo lugar, la gran cantidad de outliers y puntos de influencia provocaba que nuestro modelo no fuera capaz de predecir estos valores extremadamente inusuales. Además provocaban distorsiones en nuestros análisis descriptivos.
+
+3.- Finalmente, la gran cantidad de parámetros nos daba a entender que la situación debía ser probablemente modelada a través de un modelo de regresión múltiple, ya que sería improbable que una sola variable sea capaz de predecir las veces que se compartirá un artículo.

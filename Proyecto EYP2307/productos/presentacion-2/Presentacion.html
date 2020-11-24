@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Proyecto EYP2307 - Análisis de Regresión</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Eduardo Vásquez, Maite Vergara, Felipe Moya, Christopher Weber" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: inverse
+
+&lt;img src="./productos/presentacion-2/Presentacion_files/logouc.png" width="400px" height="135px" /&gt;
+
+.center[
+  ### ‎
+  # Número de Comparticiones en Redes Sociales - Avance 2
+]
+
+.footnote[
+  Integrantes: Eduardo Vásquez, Maite Vergara, Christopher Weber, Felipe Moya
+]
+
+---
+class: inverse, center, middle
+
+# Problemática
+
+---
+
+## Predicción de la popularidad de noticias
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="productos/presentacion-2/Presentacion_files/mashable.jpg" alt="Página inicio Mashable.com (2015)" width="600px" height="400px" /&gt;
+&lt;p class="caption"&gt;Página inicio Mashable.com (2015)&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+## Problemáticas primer avance
+
+&lt;br&gt;
+- Variables poco correlacionadas con la variable respuesta
+
+--
+
+&lt;br&gt; 
+- Gran cantidad de puntos de influencia y outliers
+
+--
+
+&lt;br&gt;
+- Gran cantidad de parámetros
+
+---
+class: inverse, center, middle
+
+# Propuestas de Modelos
+
+---
+
+## Eliminación de variables
+
+- Variables *día de la semana* y *fin de semana*
+
+--
+
+- Problemas de multicolinealidad alta
+
+
+| Variables| VIF |
+| :------- | :------: |
+| LDA_03 | `\(9.8\cdot10^8\)` |
+| n_unique_tokens| `\(13431.6\)` |
+|n_non_stop_words| `\(2073.7\)`|
+|self_reference_avg_shares| `\(19.1\)` |
+|rate_positive_words| `\(17.92\)` |
+|kw_max_min| `\(11.1\)` |
+
+- Quedamos entonces con 40 variables explicativas
+
+---
+
+## Propuesta de Modelos
+
+- Modelo completo
+
+--
+
+- Modelo completo sin las variables categóricas
+
+--
+
+- Modelo utilizado en el avance anterior 
+
+&lt;img src="figuras/01_regresion-simple.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Selección Automática de Modelos
+
+--
+
+.left-column[- Forward
+
+- Backward
+
+- Stepwise
+]
+--
+
+.right-column[
+Nombre de la variable  | []() |
+------|------|
+kw_avg_avg | tipo_noticia |
+self_reference_min_shares | num_hrefs |
+kw_max_avg | kw_min_avg |
+kw_min_min | avg_negative_polarity |
+n_tokens_title | average_token_length |
+global_subjectivity | kw_min_max |
+LDA_02 | num_self_hrefs |
+dia_de_la_semana | n_tokens_content |
+self_reference_max_shares | global_rate_positive_words |
+min_positive_polarity | num_keywords |
+abs_title_sentiment_polarity | abs_title_subjectivity |
+]
+
+---
+
+## Elección del Modelo
+
+- Vemos una tabla con los valores de AIC, BIC, y el coeficiente de determinación ajustado para
+cada modelo
+
+| Modelo |   AIC   |   BIC   | `\(\text{R}^2\)` ajustado | 
+|:------:|:--------|:-------:|:---------------|
+| Completo 1 | 853914.1 | 854360.7 | 0.02158 |
+| Completo 2 | 853932.9 | 854276.4 | 0.02082 |
+| Avance 1   | 854244.9 | 854270.7 | 0.01217 |
+| Forward    | **853889.9** | **854181.9** | **0.02174** |
+| Backward   | **853889.9** | **854181.9** | **0.02174** |
+| Stepwise   | **853889.9** | **854181.9** | **0.02174** |
+
+--
+
+- Nos quedamos entonces con el modelo obtenido por selección automática, usando 22 variables
+explicativas
+
+---
+class: inverse, center, middle
+
+# Supuestos
+
+---
+
+## Normalidad
+
+- Vemos si se cumple el supuesto a través de gráficos
+
+- Histograma:
+
+&lt;img src="figuras/02_histograma-supuestos.png" width="650px" height="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Normalidad
+
+- Vemos si se cumple el supuesto a través de gráficos
+
+- QQPlot:
+
+&lt;img src="figuras/03_qqplot-supuestos.png" width="650px" height="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Normalidad
+
+&lt;br&gt;
+
+- Usando tests
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:---------------:|:------------|
+|Kolmogorov-Smirnov| 0.31841 | &lt; 2.2e-16 |
+|Jarque-Bera       | 4.161e+13 | &lt; 2.2e-16 |
+
+&lt;br&gt;
+
+- No podemos concluir normalidad
+
+---
+
+## Independencia y Homocedasticidad
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.9965   |  0.6957   |
+
+&lt;br&gt;
+
+--
+
+- Homocedasticidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Breusch-Pagan | 77.045   |  1.39e-05   |
+
+&lt;br&gt;
+
+--
+
+- Solo podemos concluir autocorrelación 0 a un paso
+
+---
+
+## Transformación de Box-Cox
+
+- Obtenemos un valor de lambda óptimo `\(\lambda=-0.1413983\)`.
+
+&lt;img src="figuras/04_box-cox.png" width="700px" height="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Transformación de Box-Cox
+
+&lt;br&gt;
+
+- Nuestro nuevo modelo en comparación con el anterior:
+
+| Modelo   |   AIC   |   BIC   |   `\(\text{R}^2\)`   |
+|:--------:|:--------|:--------|:-----------------|
+| Antiguo  |  853889.9  | 854181.9 | 0.02174 |
+| Nuevo    |  14102.1  | 14394.1 | 0.125   |
+
+&lt;br&gt;
+
+- Vemos que AIC y BIC disminuyen drásticamente
+
+---
+
+## Supuestos usando Box-Cox
+
+- Normalidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Kolmogorov-Smirnov | 0.071626 | &lt; 2.2e-16 |
+| Jarque-Bera   |   38522   | &lt; 2.2e-16 |
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.942  |  6.005e-09  |
+
+- Homocedasticidad 
+
+|   Test   |   Estadístico   | Valor p   |
+|:--------:|:----------------|:----------|
+| Bresuch-Pagan | 651.26    |  &lt; 2.2e-16 |
+
+---
+
+## Análisis de Puntos de Influencia
+
+- Nuestro modelo cuenta con originalmente 39644 observaciones
+
+--
+
+- DFFITS: 571 observaciones indicadas como puntos de influencia
+
+&lt;img src="figuras/05_DFFITS.png" width="700px" height="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Análisis de Puntos de Influencia
+
+- Distancia de Cook
+
+&lt;img src="figuras/06_distancia-Cook.png" width="700px" height="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Análisis de Puntos de Influencia
+
+- COVRATIO: 1575 observaciones indicadas como puntos de influencia
+
+&lt;img src="figuras/07_COVRATIO.png" width="700px" height="400px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Supuestos sin puntos de influencia
+
+- Eliminamos un total de 464 observaciones
+
+--
+
+&lt;br&gt;
+
+- Nuestro nuevo modelo en comparación con el original:
+
+| Modelo   |   AIC   |   BIC   |   `\(\text{R}^2\)`   |
+|:--------:|:--------|:--------|:-----------------|
+| Antiguo  |  853889.9  | 854181.9 | 0.02174 |
+| Nuevo    |  751267.1  | 751558.7 | 0.07687   |
+
+---
+
+## Supuestos sin puntos de influencia
+
+- Normalidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Kolmogorov-Smirnov | 0.24413 | &lt; 2.2e-16 |
+| Jarque-Bera   |   14125114  | &lt; 2.2e-16 |
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.9685 |  0.001611 |
+
+- Homocedasticidad 
+
+|   Test   |   Estadístico   | Valor p   |
+|:--------:|:----------------|:----------|
+| Bresuch-Pagan | 1174    |  &lt; 2.2e-16 |
+
+---
+
+## Última opción: Box-Cox nuevamente
+
+- Obtenemos un valor de lambda igual a `\(\lambda = -0.09960017\)`
+
+&lt;br&gt;
+
+--
+
+- Nuestro modelo en comparación con el original con y sin puntos de influencia
+
+| Modelo   |   AIC   |   BIC   |   `\(\text{R}^2\)`   |
+|:--------:|:--------|:--------|:-----------------|
+| Antiguo con ptos. de influencia |  853889.9  | 854181.9 | 0.02174 |
+| Antiguo sin ptos. de influencia |  751267.1  | 751558.7 | 0.07687   |
+| Nuevo, usando Box-Cox | 34615.55 | 34907.13 | 0.1333 |
+
+---
+
+## Última verificación de supuestos
+
+- Normalidad
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Kolmogorov-Smirnov | 0.071139 | &lt; 2.2e-16 |
+| Jarque-Bera   |   17080  | &lt; 2.2e-16 |
+
+- Independencia
+
+|   Test   |   Estadístico   |   Valor p   |
+|:--------:|:----------------|:------------|
+| Durbin-Watson | 1.9308 | 5.661e-12 |
+
+- Homocedasticidad 
+
+|   Test   |   Estadístico   | Valor p   |
+|:--------:|:----------------|:----------|
+| Bresuch-Pagan | 489.8    |  &lt; 2.2e-16 |
+
+---
+
+class: inverse, center, middle
+
+# Método Alternativo
+
+---
+
+## LASSO Regression
+
+- LASSO: Least Absolute Shrinkage and Selection Operator
+
+--
+
+
+- Se desea minimizar lo siguiente:
+
+$$
+`\begin{aligned}
+&amp;\sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^{p-1} \beta_j x_{ij}\right)^2+ \lambda\sum_{j=1}^p |\beta_j| \\
+=&amp; \; \text{RSS} + \lambda\sum_{j=1}^p |\beta_j|
+\end{aligned}`
+$$
+
+&lt;br&gt;
+
+--
+
+- Cuando `\(\lambda\)` es lo suficientemente grande, la penalización `\(\ell_1\)` tiene el efecto 
+de forzar algunos coeficentes a ser exactamente 0
+
+---
+
+## LASSO Regression
+
+- La minimización anterior puede ser escrita de manera equivalente como:
+
+$$
+`\begin{aligned}
+\text{minimizar}\left\{ \sum_{i=1}^n \left( y_i - \beta_0 - \sum_{j=1}^{p-1}\beta_jx_{ij} \right)^2  \right\} \quad \text{sujeto a } \quad \sum_{j=1}^p |\beta_j| \leq s
+\end{aligned}`
+$$
+
+--
+
+&lt;img src="/mnt/Data/Estadística UC/EYP2307 - Análisis de Regresión/Proyecto EYP2307/figuras/08_figura-lasso-regression.jpg" width="700px" height="320px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Ventajas
+
+- Obtención de estimaciones iguales a cero
+
+&lt;br&gt;
+
+--
+
+- La contracción puede disminuir significantemente la varianza de nuestros estimadores
+
+&lt;br&gt;
+
+--
+
+- Obtención de modelos más simples de interpretar
+
+&lt;br&gt;
+
+--
+
+- Presenta menos problemas con variables altamente correlacionadas
+
+---
+
+## Desventajas
+
+- Estimación de `\(\lambda\)`
+
+&lt;br&gt;
+
+--
+
+- La disminución de la varianza viene con el precio de aumento de sesgo
+
+&lt;br&gt;
+
+--
+
+- La inferencia posterior es más compleja de realizar
+
+---
+
+## Ajuste del modelo utilizando LASSO
+
+- La librería que nos permite usar LASSO es `glmnet`
+
+- Vemos la contracción de parámetros a través de un gráfico:
+
+&lt;img src="/mnt/Data/Estadística UC/EYP2307 - Análisis de Regresión/Proyecto EYP2307/figuras/09_evolucion-parametros-lambda.png" width="700px" height="400px" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Ajuste del modelo utilizando LASSO
+
+- Utilizamos validación cruzada para encontrar el valor óptimo de lambda:
+
+&lt;img src="/mnt/Data/Estadística UC/EYP2307 - Análisis de Regresión/Proyecto EYP2307/figuras/10_lambda-optimo.png" width="700px" height="370px" style="display: block; margin: auto;" /&gt;
+
+--
+
+- Obtenemos un valor óptimo de `\(\lambda = 28.48036\)`
+
+---
+
+## Ajuste del modelo utilizando LASSO
+
+- Teniendo el lambda óptimo, buscamos las estimaciones de los coeficientes
+
+Nombre de la variable  | []() | []() |
+------|------|-------|
+n_tokens_title | n_tokens_content |avg_positive_polarity |
+num_hrefs | num_self_hrefs |min_positive_polarity |
+num_imgs | num_videos |avg_negative_polarity |
+average_token_length | num_keywords | max_negative_polarity |
+kw_min_min | kw_max_min |title_sentiment_polarity |
+kw_min_max | kw_max_max | abs_title_subjectivity |
+kw_min_avg | kw_max_avg | abs_title_sentiment_polarity |
+kw_avg_avg | self_reference_min_shares | dia_de_la_semana |
+self_reference_max_shares | LDA_00 | tipo_noticia
+LDA_01 | LDA_02 | |
+global_subjectivity | global_rate_positive_words | |
+
+---
+
+## Comparación
+  
+- Calculamos el `\(\text{R}^2\)` ajustado para nuestro modelo usando LASSO, y comparamos 
+con nuestro mejor modelo:
+
+|   Modelo   |   Número de variables   |   `\(\text{R}^2\)` ajustado   | AIC | BIC |
+|:----------:|:------------------------|:--------------------------|:----|:----|
+| Forward + Box-Cox - Outliers | 22 | **0.1333** |  34615.55  |  34907.13  |
+| Forward + Box-Cox | 22 | 0.125 | **14102.1** | **14394.1** |
+| Forward    |  22  |  0.02174  | 853889.9 |  854181.9
+| LASSO    | 32  | 0.02151115 | 853895.6 | 854264.9 |
+
+
+---
+
+class: inverse, center, middle
+
+# Conclusión
+
+---
+
+class: center, middle
+
+# Referencias
+
+*K. Fernandes, P. Vinagre and P. Cortez. A Proactive Intelligent Decision Support System for Predicting the Popularity of Online News. Proceedings of the 17th EPIA 2015 - Portuguese Conference on Artificial Intelligence, September, Coimbra, Portugal.*
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+- Una vez elegido nuestro modelo, pasamos a verificar nuestros supuestos.
+
+En primer lugar verificamos el supuesto de normalidad de los errores, visto a través de los 
+residuos. Vemos a través del histograma y del qqplot que pareciera ser claro que nuestros
+residuos estandarizados no provienen de una distribución normal. Además, notamos dos 
+características importantes de nuestro modelo: Primero, que la gran mayoría de residuos son positivos,
+lo que nos indica que nuestro modelo tiende a subestimar el número de veces que un artículo 
+será compartido, y segundo, que hay valores extremadamente altos, lo que puede ser provocado
+por los artículos con una cantidad inusual de veces que fue compartido. Luego, verificamos formalmente a través de tests, como el de Kolmogorov-Smirnov y el de Jarque-Bera
+que no podemos conluir normalidad, con un valor-p muy bajo.
+
+Luego, en cuanto al supuestos de independencia de los errores, usando el test de Durbin-Watson
+podemos concluir que sí hay independencia de los errores, pero, recordemos que este test lo que
+ve es autocorrelación, por lo tanto, como en el test anterior no pudimos concluir normalidad,
+en realidad solo podemos concluir que la autocorrelación a un paso es 0. En cuanto a la 
+homocedasticidad, usando el test de Breusch-Pagan, no podemos concluir este supuesto, 
+obteniendo un valor-p bastante bajo.
+
+Dado que no se cumplen los supuestos de normalidad y homocedasticidad, trataremos de utilizar transformaciones en nuestra variable respuesta para ver si así nuestros supuestos sí se cumplen. Utilizando la transformación de Box-Cox obtenemos un valor de lambda óptimo de -0.141, con el objetivo de mejorar nuestros resultados con Shapiro-Wilk. Luego, ajustamos nuestro nuevo modelo, utilizando la variable respuesta transformada, donde podemos notar que los valores de AIC y BIC disminuyen drásticamente de los 800 mil a 14 mil, mientras que nuestro R2 aumenta a 0.125.
+
+Una vez teniendo nuestra variable respuesta transformada, pasamos a verificar nuestros supuestos nuevamente, pero, lamentablemente, no somos capaces de concluir ninguno de los supuestos de normalidad y homocedasticidad, e incluso ahora tampoco podemos concluir independencia.
+
+Dado lo anterior, volvemos a nuestro modelo original y realizamos un análisis de puntos de influencia, para así eliminarlos de nuestros datos y ver si las cosas mejoran de esta manera, 
+aunque probablemente estemos perdiendo información. Para esto usamos las medidas de DFFITS, Distancia de Cook y COVRATIO. Primero, en cuanto a DFFITS identificamos 571 observaciones como puntos de influencia. Luego, en cuanto a Distancia de Cook ninguna observación cumple el requisito, lo que es esperable ya que no espereraríamos que una observación sea tan influyente en los valores predichos de las 39644 restantes. Finalmente, con el criterio COVRATIO identificamos 1575 puntos de influencia, donde en este caso el gráfico no nos dice tanto, ya que las bandas usadas en el criterio son bastante cercanas a 1, debido a la gran cantidad de observaciones.
+
+Finalmente, para no perder una gran cantidad de información de nuestra base, decidimos eliminar la intersección de el conjunto
+de observaciones que son consideradas puntos de influencia por el criterio DFFITS y por el criterio COVRATIO, los cuales son 
+un total de 464 observaciones. Vemos también cóo se compara este nuevo modelo con respecto al original, donde notamos
+que tanto el AIC y el BIC disminuyen, pero no tan drásticamente, y que el R2 aumenta a 0.07687.
+
+Así, verificamos ahora los supuestos para el nuevo modelo sin puntos de influencia, pero, nuevamente resulta
+que ningún supuesto se cumple, como podemos notar en las tres tablas que indican los tests usados.
+
+Finalmente, nuestro último recurso es usar la transformación de Box-Cox nuevamente sobre nuestro modelo ajustado sin 
+los puntos de influencia. En este caso obtenemos un valor de lambda más cercano a 0. Nuevamente comparamos
+el nuevo modelo ajustado con respecto al modelo antiguo, en este caso con y sin puntos de influencia,
+donde nuevamente notamos la disminución drástica de AIC, BIC, y el aumento del coeficiente de determinación a 0.1333.
+
+Lamentablemente, usando Box-Cox en nuestro modelo donde eliminamos los puntos de influencia, tampoco se 
+cumplen los supuestos. De todas maneras, nos quedamos con este como el mejor, al tener un valor del
+coeficiente de determinación ajustado mayor, y nos servirá para comparar con el modelo obtenido
+con un método alternativo que presentaremos a continuación.

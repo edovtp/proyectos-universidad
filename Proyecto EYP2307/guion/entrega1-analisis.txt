@@ -1,0 +1,75 @@
+- Entonces, lo primero a analizar en nuestra base de datos son las características generales de ésta,
+donde en primera instancia, viendo la dimensión de nuestra tabla, vemos que hay 39644 
+observaciones y 61 características para cada observación.
+
+- Observamos también los nombres de las features en los datos, notando que una de ellas es 
+la url del artículo o noticia, por lo que no será usada para predicción. Así, tenemos 59 variables
+explicativas y una variable respuesta de interés, que en nuestro caso es la de shares.
+
+- Algunas descripciones de los nombres de las variables explicativas en la slide anterior son:
+  - URL: URL del artículo
+  - timedelta: ...
+  - n_tokens_title: ...
+  - n_tokens_content: número de palabras en el artículo completo, incluyendo al título
+  - num_hrefs: Número de links, tanto a la misma página como a páginas externas
+  - num_imgs: Número de imágenes en el artículo
+  - data_channel_is_*: Tipo de artículo. Existe una variable para cada tipo de artículo, entre los que están
+  estilo de vida, redes sociales, negocios, entretenimiento, tecnología y mundo, representadas en la base de datos con un 1 o un 0.
+  - kw_*_*: Cada uno de los asteriscos puede ser reemplazado por min, max o avg. Luego, cada una
+  de las 9 variables funciona de la siguiente manera: para el primer asterisco, se toman todas las       palabras claves de un artículo y se ordenan según cuantas veces se comparten en promedio los artículos con aquellas palabras, así, esto nos da el mínimo, average, y máximo. Para el segundo asterisco, se ve el minimo, el promedio el máximo de veces que un artículo con ese keyword ha sido compartido. (Se puede dar un ejemplo acá). Veremos más adelante que esta variable es importante para nuestro modelo.
+  - weekday_is_*: El asterisco es reemplazado por cada uno de los días de la semana. En la base de       datos entonces existe una columna por día de la semana, donde se representa con un 0 si no fue         publicado ese día, y con un 1 en caso contrario.
+  - is_weeknd: Indica si el artículo fue publicado el fin de semana
+  - shares: Número de veces que el artículo fue compartido, y que en nuestro caso corresponde
+  a la variable respuesta de interés.
+  
+
+- Características de resumen de los datos: 
+
+Otro punto importante de un análisis inicial descriptivo es calcular ciertos valores de resumen de los datos, 
+para poder entender o visualizar características de estos. Entre estos valores está el mínimo, los cuartiles, incluyendo la mediana, y el máximo. Dado que tenemos muchas variables explicativas, presentaremos solamente algunos boxplot.
+
+Es importante notar que los boxplot entre sí no poseen los mismos ejes y, por lo que no son comparables entre sí.
+
+Vemos primero el boxplot de el número de palabras totales en artículo, viendo que la mediana es cercana a 500, aunque esto no se note de una muy 
+buena manera, donde lo que sí se aprecia es la gran cantidad de valores atípicos, representados por puntos. Vemos que ocurre lo mismo para
+las demás variables explicativas, así como la variable respuesta de shares, donde incluso vemos que existen artículos muy alejados, 
+que han sido compartido más de 200.000 veces. 
+
+
+Notamos que en los últimos gráficos es difícil obtener las medidas de resumen buscadas, por lo que 
+hacemos un ajuste, usando escalas logarítmicas para el eje Y. Ahora podemos ver de mejor manera 
+las medidas de resumen.
+
+Finalmente, para entender aún de mejor manera las características de resumen, podemos eliminar los outliers, haciendo un boxplot que solo vaya entre los cuantiles 0.1 y 0.9. Notamos que no tenemos la necesidad
+en este caso de ajustar la escala del eje Y. Podemos verificar los valores con lo que nos entrega summary.
+
+- Distribución de Shares: Al ver el gráfico boxplot anterior para shares hemos notado algo muy importante, y es que los valores de esta variable, que es nuestra variable de respuesta, toma 
+valores muy extremos, donde el tercer cuartil es 2800, pero tenemos valores atípicos por sobre
+los 100000. Para visualizar esto, podemos ver dos histogramas, uno con la escala normal, y otro con
+escalas ajustadas logarítmicas tanto en x como en y. Notamos que en el primer gráfico se muestra que
+la mayoría de los datos se encuentran en el rango de cero a 50.000, pero sabemos que existen valores
+extremos atípicos, por el largo del eje x, solo que son tan pocos que las barras son minúsculas.
+
+- Relación timedelta - shares: Ahora que ya entendemos cómo se comporta la variable respuesta, 
+pasamos a buscar relaciones entre ésta y las variabes explicativas. Una de las primeras preguntas que tuvimos
+es a raiz de la variable timedelta, donde queríamos ver si es que los artículos con más días entre que
+se publicaron y que se recolectaron los datos tenían más cantidad de comparticiones, o, si es que
+los artículos se comparten más durante los primeros días quizás y luego se estancan. Viendo el 
+scatterplot podemos notar que lo último parece ser cierto, y que no hay una relación concreta entre 
+ambas variables.
+
+Además usamos colores para mostrar algunos outliers de shares, donde el número de veces compartido
+supera los 100.000.
+
+- Tipo de Noticia:
+  - Vemos la cantidad de noticias separas por su tipo (gráfico azul), y abajo la cantidad de comparticiones que tienen cada una.
+  - Si vemos el gráfico azul podemos notar que el tipo de noticia "mundo" es el que más subidas tiene en la página, y
+    si vemos la mediana de cada tipo de noticia (los gráficos de caja), vemos que la mediana de la cantidad de noticias del tipo mundo es la menor, por lo que
+    a pesar de que haya más noticias sobre mundo en esta página, estas no son tan compartidas como las noticias sobre Redes sociales por ejemplo.
+ 
+- Día publicación:
+  - Hablar sobre la cantidad de noticias que se suben cada día de la semana.
+  - Notar que la mediana del número de noticias compartidas cada día de la semana es bastante parecido, pero que el viernes se nota un poco mayor, y 
+    claramente el fin de semana esta mediana es mayor. Lo cual, si lo pensamos tiene mucho sentido, pues el fin de semana la gente en general
+    tiene más tiempo libre para compartir noticias.
+  - Entonces es importante ver que el sábado y domingo son los días que menos se suben noticias, pero también son los días que tienen una mediana de compartición más alta.

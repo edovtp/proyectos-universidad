@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Proyecto EYP2307 - Análisis de Regresión</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Eduardo Vásquez, Maite Vergara, Felipe Moya, Christopher Weber" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: inverse
+
+&lt;img src="Presentacion_files/prueba2.png" width="400px" height="135px" /&gt;
+
+.center[
+  ### ‎
+  # Número de Comparticiones en Redes Sociales - Grupo B
+]
+
+.footnote[
+  Integrantes: Eduardo Vásquez, Maite Vergara, Christopher Weber, Felipe Moya
+]
+
+---
+class: inverse, center, middle
+
+# Problemática
+
+---
+
+## Predicción de la popularidad de noticias
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Presentacion_files/Mashable.jpg" alt="Página inicio Mashable.com (2015)" width="600px" height="400px" /&gt;
+&lt;p class="caption"&gt;Página inicio Mashable.com (2015)&lt;/p&gt;
+&lt;/div&gt;
+
+---
+class: inverse, center, middle
+
+# Análisis Descriptivo
+
+---
+
+# Análisis inicial
+
+El primer análisis a realizar es el de ver las características generales de nuestra 
+**base de datos**:
+
+
+
+
+```r
+dim(OnlineNewsPopularity)
+```
+
+```
+## [1] 39644    61
+```
+
+```r
+names(OnlineNewsPopularity)[1:21]
+```
+
+```
+##  [1] "url"                           "timedelta"                    
+##  [3] "n_tokens_title"                "n_tokens_content"             
+##  [5] "n_unique_tokens"               "n_non_stop_words"             
+##  [7] "n_non_stop_unique_tokens"      "num_hrefs"                    
+##  [9] "num_self_hrefs"                "num_imgs"                     
+## [11] "num_videos"                    "average_token_length"         
+## [13] "num_keywords"                  "data_channel_is_lifestyle"    
+## [15] "data_channel_is_entertainment" "data_channel_is_bus"          
+## [17] "data_channel_is_socmed"        "data_channel_is_tech"         
+## [19] "data_channel_is_world"         "kw_min_min"                   
+## [21] "kw_max_min"
+```
+
+---
+
+
+```r
+names(OnlineNewsPopularity)[-c(1:21)]
+```
+
+```
+##  [1] "kw_avg_min"                   "kw_min_max"                  
+##  [3] "kw_max_max"                   "kw_avg_max"                  
+##  [5] "kw_min_avg"                   "kw_max_avg"                  
+##  [7] "kw_avg_avg"                   "self_reference_min_shares"   
+##  [9] "self_reference_max_shares"    "self_reference_avg_sharess"  
+## [11] "weekday_is_monday"            "weekday_is_tuesday"          
+## [13] "weekday_is_wednesday"         "weekday_is_thursday"         
+## [15] "weekday_is_friday"            "weekday_is_saturday"         
+## [17] "weekday_is_sunday"            "is_weekend"                  
+## [19] "LDA_00"                       "LDA_01"                      
+## [21] "LDA_02"                       "LDA_03"                      
+## [23] "LDA_04"                       "global_subjectivity"         
+## [25] "global_sentiment_polarity"    "global_rate_positive_words"  
+## [27] "global_rate_negative_words"   "rate_positive_words"         
+## [29] "rate_negative_words"          "avg_positive_polarity"       
+## [31] "min_positive_polarity"        "max_positive_polarity"       
+## [33] "avg_negative_polarity"        "min_negative_polarity"       
+## [35] "max_negative_polarity"        "title_subjectivity"          
+## [37] "title_sentiment_polarity"     "abs_title_subjectivity"      
+## [39] "abs_title_sentiment_polarity" "shares"
+```
+
+---
+
+# Algunas Variables Explicativas
+
+- **url**: URL del artículo
+- **timedelta**: Dias entre la publicación del artículo y la adquisición de la base de datos
+- **n_tokens_title**: Número de palabras en el título
+- **n_tokens_content**: Número de palabras en el artículo completo
+- **num_hrefs**: Número de links dentro del artículo
+- **num_imgs**: Número de imágenes
+- **data\_channel\_is_\* **: Tipo de artículo
+- **kw\_\*\_\* **: Relacionado con palabras clave
+- **weekday\_is_\* **: Día de la semana en que el artículo fue publicado
+- **is_weeknd**: Indica si el artículo fue publicado el fin de semana
+- **shares**: Número de veces que el artículo fue compartido (variable respuesta)
+
+---
+
+# Características de Resumen
+
+Dada la gran cantidad de variables, mostramos solamente un par de **boxplot** para algunas de estas,
+incluyendo la de respuesta:
+
+&lt;img src="Presentacion_files/figure-html/summary-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+Finalmente, para fines ilustrativos, eliminamos los outliers y ajustamos el eje Y para 
+mostrar valores entre los cuantiles 0.1 y 0.9:
+
+&lt;img src="Presentacion_files/figure-html/summary 3-1.png" style="display: block; margin: auto;" /&gt;
+
+.pull-left[
+
+```r
+summary(n_tokens_content)
+```
+
+```{.texto_pequeno}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##     0.0   246.0   409.0   546.5   716.0  8474.0
+```
+
+```r
+summary(num_hrefs)
+```
+
+```{.texto_pequeno}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    0.00    4.00    8.00   10.88   14.00  304.00
+```
+]
+
+.pull-right[
+
+```r
+summary(kw_avg_avg)
+```
+
+```{.texto_pequeno}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       0    2382    2870    3136    3600   43568
+```
+
+```r
+summary(shares)
+```
+
+```{.texto_pequeno}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       1     946    1400    3395    2800  843300
+```
+]
+
+---
+# Distribución de *shares*
+
+Queremos ver el **comportamiento** de nuestra variable respuesta shares:
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Presentacion_files/figure-html/unnamed-chunk-5-1.png" alt="Histograma del número de comparticiones"  /&gt;
+&lt;p class="caption"&gt;Histograma del número de comparticiones&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+# Tipo de noticia
+
+
+
+&lt;img src="Presentacion_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Presentacion_files/figure-html/unnamed-chunk-8-1.png" alt="Comparación entre cantidad de noticias y número de comparticiones"  /&gt;
+&lt;p class="caption"&gt;Comparación entre cantidad de noticias y número de comparticiones&lt;/p&gt;
+&lt;/div&gt;
+
+```
+## $title
+## [1] ""
+## 
+## attr(,"class")
+## [1] "labels"
+```
+
+
+---
+# Día publicación
+
+
+
+&lt;img src="Presentacion_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="Presentacion_files/figure-html/unnamed-chunk-10-1.png" alt="Día en que se publica la noticia y cantidad de veces compartida"  /&gt;
+&lt;p class="caption"&gt;Día en que se publica la noticia y cantidad de veces compartida&lt;/p&gt;
+&lt;/div&gt;
+
+
+
+---
+class: inverse, center, middle
+
+# Modelo
+
+
+---
+
+# Correlación
+
+Primero vemos la **correlación** entre cada una de las variables explicativas y la variable respuesta:
+
+
+```r
+datos_correlacion = OnlineNewsPopularity[1:59]
+cor_matrix = cor(OnlineNewsPopularity$shares, datos_correlacion)
+```
+
+**Algunos valores de correlaciones con la variable respuesta**:
+
+.pull-left[
+
+```
+## [1] "timedelta"
+## [1] 0.008662288
+## [1] "n_tokens_title"
+## [1] 0.008783119
+## [1] "n_tokens_content"
+## [1] 0.002458984
+## [1] "n_unique_tokens"
+## [1] 0.0008063457
+## [1] "n_non_stop_words"
+## [1] 0.0004429416
+## [1] "n_non_stop_unique_tokens"
+## [1] 0.0001141719
+```
+]
+
+
+.pull-right[
+
+```
+## [1] "num_hrefs"
+## [1] 0.04540401
+## [1] "num_self_hrefs"
+## [1] -0.001900403
+## [1] "num_imgs"
+## [1] 0.0393876
+## [1] "num_videos"
+## [1] 0.02393607
+## [1] "average_token_length"
+## [1] -0.0220073
+## [1] "num_keywords"
+## [1] 0.02181823
+```
+]
+
+---
+# Variables con Mayor Correlación
+
+
+
+
+```r
+nombre_primera_correlacion; valor_primera_correlacion
+```
+
+```
+## [1] "kw_avg_avg"
+```
+
+```
+## [1] 0.1104129
+```
+
+```r
+nombre_segunda_correlacion; valor_segunda_correlacion
+```
+
+```
+## [1] "LDA_03"
+```
+
+```
+## [1] 0.08377149
+```
+
+```r
+nombre_tercera_correlacion; valor_tercera_correlacion 
+```
+
+```
+## [1] "kw_max_avg"
+```
+
+```
+## [1] 0.06430586
+```
+
+---
+
+# Correlación con Transformaciones
+
+Viendo el bajo valor de correlación entre las variables explicativas y la respuesta,
+vemos lo mismo pero con el logaritmo de shares:
+
+
+```r
+datos_correlacion = OnlineNewsPopularity[1:59]
+cor_matrix = cor(log(OnlineNewsPopularity$shares), datos_correlacion)
+```
+
+con lo cual la correlación aumenta en algunas variables, pero **kw_avg_avg** se mantiene como 
+el predictor con mayor valor:
+
+
+```r
+valor_primera_correlacion = max(abs(cor_matrix))
+(nombre_primera_correlacion = colnames(cor_matrix)[which.max(cor_matrix)])
+```
+
+```
+## [1] "kw_avg_avg"
+```
+---
+
+# Variables con Mayor Correlación
+
+
+
+
+```r
+nombre_primera_correlacion; valor_primera_correlacion
+```
+
+```
+## [1] "kw_avg_avg"
+```
+
+```
+## [1] 0.2217205
+```
+
+```r
+nombre_segunda_correlacion; valor_segunda_correlacion
+```
+
+```
+## [1] "LDA_02"
+```
+
+```
+## [1] -0.1650336
+```
+
+```r
+nombre_tercera_correlacion; valor_tercera_correlacion 
+```
+
+```
+## [1] "LDA_03"
+```
+
+```
+## [1] 0.1259615
+```
+
+---
+# Regresión Lineal Simple
+
+Es así que proponemos un modelo lineal simple de la forma:
+$$
+\log{y_i} = \beta_0 + \beta_1 x_i + \epsilon_i
+$$
+donde `\(y_i\)` corresponde a **shares** y `\(x_i\)` a **kw_avg_avg**.
+
+Para ver como se relacionan ambas variables, podemos construir un scatterplot:
+
+&lt;img src="Presentacion_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Regresión Lineal Simple
+
+Teniendo la variable con mayor correlación **kw_avg_avg**, ajustamos 
+el modelo propuesto:
+
+```r
+modelo = lm(log(shares) ~ kw_avg_avg, data = OnlineNewsPopularity)
+```
+
+y podemos ver los **coeficientes** obtenidos:
+
+```r
+modelo$coefficients
+```
+
+```
+##  (Intercept)   kw_avg_avg 
+## 6.9840519627 0.0001565131
+```
+
+---
+# Regresión Lineal Simple
+
+Teniendo los coeficientes del modelo, podemos graficar la recta de regresión:
+
+&lt;img src="Presentacion_files/figure-html/regresion-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Regresión Lineal Simple
+
+Finalmente, podemos ver los valores de interés que nos entrega `lm`:
+
+
+```
+## 
+## Call:
+## lm(formula = log(shares) ~ kw_avg_avg, data = OnlineNewsPopularity)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.7981 -0.5933 -0.1832  0.4461  6.0736 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 6.984e+00  1.176e-02  593.88   &lt;2e-16 ***
+## kw_avg_avg  1.565e-04  3.457e-06   45.27   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.9073 on 39642 degrees of freedom
+## Multiple R-squared:  0.04916,	Adjusted R-squared:  0.04914 
+## F-statistic:  2050 on 1 and 39642 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+class: inverse, center, middle
+
+# Conclusión
+
+---
+
+class: center, middle
+
+# Referencias
+
+*K. Fernandes, P. Vinagre and P. Cortez. A Proactive Intelligent Decision Support System for Predicting the Popularity of Online News. Proceedings of the 17th EPIA 2015 - Portuguese Conference on Artificial Intelligence, September, Coimbra, Portugal.*
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

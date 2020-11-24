@@ -1,0 +1,13 @@
+- Debido a la expansión de la web, la predicción de la popularidad de noticias en línea es de gran interés. Por esta razón,
+investigadores de Portugal recolectaron el año 2015 una base de datos sobre artículos publicados en el blog Mashable, 
+el cual es un blog de noticias estadounidense, enfocada en el entretenimiento, cultura, tecnología y bien social, 
+creada el año 2005.
+
+Esta base de datos resume un conjunto de características acerca de artículos publicados por esta página en un 
+periodo de dos años (2013-2014). El objetivo es poder predecir la popularidad de nuevos artículos publicados,
+esto es, la cantidad de veces que éste será compartido, a partir de las características dadas.
+Además, no solo interea la predicción, si no que también el entender la relación existente
+entre variables explicativas y la variable respuestas, y cómo estas también interactúan entre sí.
+
+Para esto, presentamos un análisis descriptivo de los datos entregados, para luego proponer
+un modelo lineal simple con una de las variables.

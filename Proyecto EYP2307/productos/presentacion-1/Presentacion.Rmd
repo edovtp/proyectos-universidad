@@ -1,0 +1,412 @@
+---
+title: "Proyecto EYP2307 - Análisis de Regresión"
+author: "Eduardo Vásquez, Maite Vergara, Felipe Moya, Christopher Weber"
+date: "27-09-2020"
+output:
+  xaringan::moon_reader:
+    css: 
+      - xaringan-themer.css
+      - custom.css
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+options(htmltools.dir.version = FALSE)
+library(xaringanthemer)
+style_mono_light(base_color = "#3b5998")
+```
+
+class: inverse
+
+```{r, echo=FALSE, out.width = "400px", out.height="135px", fig.align='left.top'}
+knitr::include_graphics("Presentacion_files/prueba2.png")
+```
+
+.center[
+  ### ‎
+  # Número de Comparticiones en Redes Sociales - Grupo B
+]
+
+.footnote[
+  Integrantes: Eduardo Vásquez, Maite Vergara, Christopher Weber, Felipe Moya
+]
+
+---
+class: inverse, center, middle
+
+# Problemática
+
+---
+
+## Predicción de la popularidad de noticias
+
+```{r, echo=FALSE, out.width = "600px", out.height="400px", fig.align='center', fig.pos='p', fig.cap="Página inicio Mashable.com (2015)"}
+knitr::include_graphics("Presentacion_files/Mashable.jpg")
+```
+
+---
+class: inverse, center, middle
+
+# Análisis Descriptivo
+
+---
+
+# Análisis inicial
+
+El primer análisis a realizar es el de ver las características generales de nuestra 
+**base de datos**:
+
+```{r setup_bdd, include=FALSE, echo=FALSE}
+library(readr)
+library(scales)
+library(tidyverse)
+library(cowplot)
+library(knitr)
+
+OnlineNewsPopularity <- read_csv("../../Datos/OnlineNewsPopularity.csv")
+attach(OnlineNewsPopularity)
+```
+
+```{r}
+dim(OnlineNewsPopularity)
+names(OnlineNewsPopularity)[1:21]
+```
+
+---
+
+```{r}
+names(OnlineNewsPopularity)[-c(1:21)]
+```
+
+---
+
+# Algunas Variables Explicativas
+
+- **url**: URL del artículo
+- **timedelta**: Dias entre la publicación del artículo y la adquisición de la base de datos
+- **n_tokens_title**: Número de palabras en el título
+- **n_tokens_content**: Número de palabras en el artículo completo
+- **num_hrefs**: Número de links dentro del artículo
+- **num_imgs**: Número de imágenes
+- **data\_channel\_is_\* **: Tipo de artículo
+- **kw\_\*\_\* **: Relacionado con palabras clave
+- **weekday\_is_\* **: Día de la semana en que el artículo fue publicado
+- **is_weeknd**: Indica si el artículo fue publicado el fin de semana
+- **shares**: Número de veces que el artículo fue compartido (variable respuesta)
+
+---
+
+# Características de Resumen
+
+Dada la gran cantidad de variables, mostramos solamente un par de **boxplot** para algunas de estas,
+incluyendo la de respuesta:
+
+```{r summary, echo=FALSE, fig.align='center', fig.pos='o', fig.height=5.5, fig.width=10}
+OnlineNewsPopularity <- OnlineNewsPopularity[,-1]
+
+boxplot_tokens_content <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping = aes(y = n_tokens_content, x = ""), fill="#56B4E9") +
+  xlab("")
+boxplot_num_hrefs <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping = aes(y = num_hrefs, x = ""), fill="#009E73") +
+  xlab("")
+boxplot_kw_avg <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping= aes(y = kw_avg_avg, x = ""), fill="#CC79A7") +
+  xlab("")
+boxplot_shares <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping = aes(y = shares, x = ""), fill="#D55E00") +
+  xlab("")
+
+plot_grid(boxplot_tokens_content, boxplot_num_hrefs, boxplot_kw_avg, boxplot_shares, nrow = 1)
+```
+
+---
+Finalmente, para fines ilustrativos, eliminamos los outliers y ajustamos el eje Y para 
+mostrar valores entre los cuantiles 0.1 y 0.9:
+
+```{r summary 3, echo=FALSE, fig.align='center', fig.pos='h', fig.height=2.5, fig.width=10, warning=FALSE}
+
+boxplot_tokens_content <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping = aes(y = n_tokens_content, x = ""), outlier.shape = NA, fill="#56B4E9") +
+  xlab("") + 
+  coord_cartesian(ylim = quantile(OnlineNewsPopularity$n_tokens_content, c(0.1, 0.9)))
+boxplot_num_hrefs <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping = aes(y = num_hrefs, x = ""), outlier.shape = NA, fill="#009E73") +
+  xlab("") +
+  coord_cartesian(ylim = quantile(OnlineNewsPopularity$num_hrefs, c(0.1, 0.9)))
+boxplot_kw_avg <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping= aes(y = kw_avg_avg, x = ""), outlier.shape = NA, fill="#CC79A7") +
+  xlab("") +
+  coord_cartesian(ylim = quantile(OnlineNewsPopularity$kw_avg_avg, c(0.1, 0.9)))
+boxplot_shares <- ggplot(data = OnlineNewsPopularity) +
+  geom_boxplot(mapping = aes(y = shares, x = ""), outlier.shape = NA, fill="#D55E00") +
+  coord_cartesian(ylim = quantile(OnlineNewsPopularity$shares, c(0.1, 0.9))) +
+  xlab("")
+
+plot_grid(boxplot_tokens_content, boxplot_num_hrefs, boxplot_kw_avg, boxplot_shares, nrow = 1)
+```
+
+.pull-left[
+```{r tabla_resumen, class.output="texto_pequeno"}
+summary(n_tokens_content)
+summary(num_hrefs)
+```
+]
+
+.pull-right[
+```{r tabla_resumen 2, class.output="texto_pequeno"}
+summary(kw_avg_avg)
+summary(shares)
+```
+]
+
+---
+# Distribución de *shares*
+
+Queremos ver el **comportamiento** de nuestra variable respuesta shares:
+
+```{r echo=FALSE, fig.align='center',fig.pos='o', fig.height=5, fig.width=9, warning=FALSE, fig.cap="Histograma del número de comparticiones"}
+histograma_normal <- ggplot(data = OnlineNewsPopularity) +
+  geom_histogram(mapping = aes(x = shares), bins = 20, colour="white", fill="#0072B2")
+
+histograma_ajustado <- ggplot(data = OnlineNewsPopularity) +
+  geom_histogram(mapping = aes(x = shares), bins = 20, colour="white", fill="#0072B2") +
+  scale_x_log10() +
+  scale_y_log10()
+
+plot_grid(histograma_normal, histograma_ajustado, nrow = 1)
+```
+
+---
+
+# Tipo de noticia
+
+```{r echo=FALSE, warning=FALSE, include=FALSE}
+OnlineNewsPopularity <- read_csv("../../Datos/popularidad_noticias.csv")
+OnlineNewsPopularity <- OnlineNewsPopularity[,-1]
+```
+
+```{r echo=FALSE, fig.align='center', fig.pos='a', fig.height=3, fig.width=9}
+OnlineNewsPopularity$tipo_noticia = factor(OnlineNewsPopularity$tipo_noticia, levels = 
+                                             c("Estilo de vida", "Redes sociales", "Otro", 
+                                               "Negocios", "Entretenimiento", "Tecnología", "Mundo"))
+ggplot(data = OnlineNewsPopularity) + 
+  geom_bar(mapping = aes(x = tipo_noticia), fill="#56B4E9") +
+  xlab("") +
+  ylab("Cantidad") + 
+  ggtitle("Cantidad de noticias por tipo")
+```
+
+```{r echo=FALSE, fig.align='center',fig.pos='o', fig.height=3, fig.width=9, fig.cap='Comparación entre cantidad de noticias y número de comparticiones'}
+OnlineNewsPopularity$tipo_noticia = factor(OnlineNewsPopularity$tipo_noticia, levels = 
+                                             c("Estilo de vida", "Redes sociales", "Negocios", 
+                                               "Mundo", "Entretenimiento", "Tecnología", "Otro"))
+ggplot(data = OnlineNewsPopularity) + 
+  geom_boxplot(mapping = aes(x = tipo_noticia, y = shares, fill = tipo_noticia),
+               outlier.shape = NA, ) +
+  coord_cartesian(ylim = c(0, 10000)) +
+  ylab("Shares") +
+  xlab("") + 
+  labs(fill = "Tipo noticia")
+  ggtitle("")
+```
+
+
+---
+# Día publicación
+
+
+
+```{r echo=FALSE, fig.align='center',fig.pos='o', fig.height=3, fig.width=9}
+OnlineNewsPopularity$dia_de_la_semana = factor(OnlineNewsPopularity$dia_de_la_semana, 
+                                            levels = c("Lunes", "Martes", "Miércoles", "Jueves", 
+                                                        "Viernes", "Sábado", "Domingo"))
+ggplot(data = OnlineNewsPopularity) + 
+  geom_bar(mapping = aes(x = dia_de_la_semana), fill="turquoise4") +
+  xlab("") +
+  ylab("Cantidad") + 
+  ggtitle("Cantidad de publicaciones por día de la semana")
+```
+
+
+
+```{r echo=FALSE, fig.align='center',fig.pos='o', fig.height=3, fig.width=9, fig.cap='Día en que se publica la noticia y cantidad de veces compartida'}
+OnlineNewsPopularity$dia_de_la_semana = factor(OnlineNewsPopularity$dia_de_la_semana, 
+                                            levels = c("Lunes", "Martes", "Miércoles", "Jueves", 
+                                                        "Viernes", "Sábado", "Domingo"))
+ggplot(data = OnlineNewsPopularity[OnlineNewsPopularity$shares<10000 & 
+                                     OnlineNewsPopularity$shares>200,]) + 
+  geom_boxplot(outlier.shape = NA , mapping = aes(x = dia_de_la_semana, y = shares, fill = dia_de_la_semana)) + 
+  xlab("Día publicado") + 
+  ylab("Shares") + 
+  labs(fill = "Día de la semana") +
+  scale_y_log10()
+```
+
+
+
+---
+class: inverse, center, middle
+
+# Modelo
+
+
+---
+
+# Correlación
+
+Primero vemos la **correlación** entre cada una de las variables explicativas y la variable respuesta:
+
+```{r echo=TRUE}
+datos_correlacion = OnlineNewsPopularity[1:59]
+cor_matrix = cor(OnlineNewsPopularity$shares, datos_correlacion)
+```
+
+**Algunos valores de correlaciones con la variable respuesta**:
+
+.pull-left[
+```{r echo=FALSE}
+for (i in 1:6){
+  print(colnames(cor_matrix)[i])
+  print(cor_matrix[i])
+}
+```
+]
+
+
+.pull-right[
+```{r echo=FALSE}
+for (i in 7:12){
+  print(colnames(cor_matrix)[i])
+  print(cor_matrix[i])
+}
+```
+]
+
+---
+# Variables con Mayor Correlación
+
+```{r echo = FALSE}
+valor_primera_correlacion = max(abs(cor_matrix))
+nombre_primera_correlacion = colnames(cor_matrix)[which.max(cor_matrix)]
+valor_segunda_correlacion = 0.08377149
+nombre_segunda_correlacion = "LDA_03"
+valor_tercera_correlacion = 0.06430586
+nombre_tercera_correlacion = "kw_max_avg"
+```
+
+```{r}
+nombre_primera_correlacion; valor_primera_correlacion
+nombre_segunda_correlacion; valor_segunda_correlacion
+nombre_tercera_correlacion; valor_tercera_correlacion 
+```
+
+---
+
+# Correlación con Transformaciones
+
+Viendo el bajo valor de correlación entre las variables explicativas y la respuesta,
+vemos lo mismo pero con el logaritmo de shares:
+
+```{r correlacion_transformada, echo=TRUE}
+datos_correlacion = OnlineNewsPopularity[1:59]
+cor_matrix = cor(log(OnlineNewsPopularity$shares), datos_correlacion)
+```
+
+con lo cual la correlación aumenta en algunas variables, pero **kw_avg_avg** se mantiene como 
+el predictor con mayor valor:
+
+```{r}
+valor_primera_correlacion = max(abs(cor_matrix))
+(nombre_primera_correlacion = colnames(cor_matrix)[which.max(cor_matrix)])
+```
+---
+
+# Variables con Mayor Correlación
+
+```{r echo = FALSE}
+valor_primera_correlacion = max(abs(cor_matrix))
+nombre_primera_correlacion = colnames(cor_matrix)[which.max(cor_matrix)]
+valor_segunda_correlacion = -0.16503361
+nombre_segunda_correlacion = "LDA_02"
+valor_tercera_correlacion = 0.1259615
+nombre_tercera_correlacion = "LDA_03"
+```
+
+```{r}
+nombre_primera_correlacion; valor_primera_correlacion
+nombre_segunda_correlacion; valor_segunda_correlacion
+nombre_tercera_correlacion; valor_tercera_correlacion 
+```
+
+---
+# Regresión Lineal Simple
+
+Es así que proponemos un modelo lineal simple de la forma:
+$$
+\log{y_i} = \beta_0 + \beta_1 x_i + \epsilon_i
+$$
+donde $y_i$ corresponde a **shares** y $x_i$ a **kw_avg_avg**.
+
+Para ver como se relacionan ambas variables, podemos construir un scatterplot:
+
+```{r echo=FALSE, fig.align='center',fig.pos='h', fig.height=4, fig.width=9}
+ggplot(data = OnlineNewsPopularity) +
+  geom_point(mapping = aes(x = kw_avg_avg, y = log(shares)), color  ="turquoise4")
+```
+
+---
+# Regresión Lineal Simple
+
+Teniendo la variable con mayor correlación **kw_avg_avg**, ajustamos 
+el modelo propuesto:
+```{r ajuste modelo}
+modelo = lm(log(shares) ~ kw_avg_avg, data = OnlineNewsPopularity)
+```
+
+y podemos ver los **coeficientes** obtenidos:
+```{r}
+modelo$coefficients
+```
+
+---
+# Regresión Lineal Simple
+
+Teniendo los coeficientes del modelo, podemos graficar la recta de regresión:
+
+```{r regresion, echo=FALSE, fig.align='center', fig.pos='h', fig.height=6, fig.width=9, warning=FALSE, message=FALSE}
+ecuacion <- bquote("log y = 6.98 + 0.0001565 * x")
+annotation <- data.frame(x = c(30000), y = c(3.3), label=c(ecuacion))
+  
+ggplot(data = OnlineNewsPopularity) +
+  geom_point(mapping =aes(x = kw_avg_avg, y = log(shares)), color  ="turquoise4")+
+  stat_smooth(aes(x = kw_avg_avg, y = log(shares)), colour = "#D55E00", method = 'lm') +
+  geom_label(data = annotation, aes(x = x, y = y, label = label), color = "#D55E00", size = 6, fontface="bold")
+```
+
+---
+# Regresión Lineal Simple
+
+Finalmente, podemos ver los valores de interés que nos entrega `lm`:
+
+```{r echo=FALSE}
+summary(modelo)
+```
+
+---
+class: inverse, center, middle
+
+# Conclusión
+
+---
+
+class: center, middle
+
+# Referencias
+
+*K. Fernandes, P. Vinagre and P. Cortez. A Proactive Intelligent Decision Support System for Predicting the Popularity of Online News. Proceedings of the 17th EPIA 2015 - Portuguese Conference on Artificial Intelligence, September, Coimbra, Portugal.*

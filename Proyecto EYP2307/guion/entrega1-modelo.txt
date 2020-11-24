@@ -1,0 +1,37 @@
+- Correlación:
+  - Comentar sobre las correlaciones para poner en contexto la regresión que haremos después.
+  - Decir la escasa correlación que hay en la base de datos que tenemos (con las pocas que se ven en la diapositiva).
+
+- Variable con mayor correlación:
+  - Mostrar nuestras 3 variables con mayor correlación, explicar de ellas.
+
+- Regresión Lineal Simple:
+  - Teniendo entonces que la variable explicativa con mayor correlación con shares es kw_avg_avg,
+  dada cuando shares es transformada logarítmicamente, es que proponemos un modelo de regresión lineal simple
+  de la forma log y = b0 + b1*xi + ei, donde yi corresponde a shares, xi a kw_avg_avg y epsilon 
+  al error normal asociado de media cero y varianza sigma^2. 
+  
+  Podemos ver cómo se relacionan de manera preliminar ambas variables viendo un gráfico de puntos con 
+  shares transformada. Vemos que los valores de y ahora se encuentran 
+  más densos, y que los outliers se acercan más a las demas observaciones.
+  
+  Luego, ajustamos el modelo, y lo primero que podemos ver son 
+  los coeficientes obtenidos. El valor estimado de b0 es 6.98, que nos indica que cuando kw_avg_avg es
+  0, la esperanza de shares es ese valor, y, el valor de b1 de 0.000157 nos indica que por cada unidad
+  que aumenta kw_avg_avg, el logaritmo de shares aumenta en ese valor. Pareciera ser que es un valor bastante
+  pequeño, pero viendo el gráfico de puntos, vemos que los valores de x son bastante altos.
+  
+  Ya teniendo los coeficientes, podemos entonces graficar la recta de regresión, como se 
+  ve en el gráfico. Notamos la pendiente positiva indicada por b1, y el punto de intersección con el 
+  eje y cuando kw_avg_avg es 0, dado por b0.
+  
+  Finalmente podemos ver valores de interés que nos entrega el resumen de lm, partiendo por las medidas
+  de resumen de los residuos, luego tenemos los parámetros con los valores estimados y sus desviaciones
+  estándar estimadas. Además, vemos que ambos parámetros son significativos, ya que tienen un valor p 
+  bastante bajo. Finalmente, notamos que la desviación estándar estimada de los errores es de 0.9073,
+  el R^2 es de 0.04916, el cual es bajo, pero esperable, y el estadístico F con un valor p también bastante bajo,
+  por lo que el parámetro beta1 es significativo.
+  
+  En conclusión, los resultados obtenidos son esperables, ya que no esperaríamos que a través de una
+  sola variable podamos predecir la popularidad de nuestros artículos de una manera precisa, por lo que
+  tendremos que ver más adelante el uso de una regresión múltiple para mejorar nuestro modelo.
