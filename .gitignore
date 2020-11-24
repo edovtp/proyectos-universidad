@@ -1,3 +1,4 @@
+# EYP2307 - Análisis de Regresión
 # History files
 .Rhistory
 .Rapp.history
@@ -42,3 +43,26 @@ vignettes/*.pdf
 .ipynb_checkpoints/
 
 .DS_Store
+
+# IIC2143 - Ingeniería de Software
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore uploaded files in development
+/storage/*
+!/storage/.keep
+
+/node_modules
+/yarn-error.log
+
+/public/assets
+.byebug_history
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
