@@ -1,0 +1,32 @@
+<section class="section">
+  <div class="columns">
+    <div class="column"></div>
+    <div class="column is-5">
+      <div class="box">
+        <h1 class="title has-text-centered"> Editar Menú</h1>
+        <%= form_with(model: @menu, url: local_menu_path(@local_id, @menu.id), method: :patch) do |form| %>
+          <div class="field">
+            Plato:
+            <%= form.text_field :nombre, class: "input"%>
+          </div>
+
+          <div class="field">
+            Descripción:
+            <%= form.text_area :descripcion, class: "textarea"%>
+         </div>
+
+          <div class="field">
+            Precio:
+            <%= form.number_field :precio, class: "input"%>
+           </div>
+
+          <div class="actions">
+            <%= form.submit "Guardar Cambios", class: "button is-primary"%>
+            <%= link_to "Volver", local_menues_path(@local_id), class: "button is-link"%>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="column"></div>
+  </div>
+</section>

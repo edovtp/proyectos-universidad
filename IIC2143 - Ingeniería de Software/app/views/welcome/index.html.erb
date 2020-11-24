@@ -1,0 +1,133 @@
+<style>
+.container {
+  position: relative;
+  width: 50%;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: rgba(255,255,255,.5); /*rgba(121, 242, 246, 0.5)*/
+}
+
+.container:hover .overlay {
+  opacity: 1;
+}
+
+.text {
+  color: white;
+  font-size: 50px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+</style>
+
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+<div class="container is-fluid">
+<img class="bg" src="https://images.pexels.com/photos/3951901/pexels-photo-3951901.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=450&w=740",
+style="width:100%;height:750px">
+<div class="overlay">
+	<div class="text"> Haz match y conócel@ </div>
+</div>
+</div>
+
+<section class="section">
+<div class="container has-text-centered">
+	<h2 class="title">Match & ¿Meet? ¿eat? </h2>
+	<p><b>Match & Meat</b> es un sitio web donde podras encontrar a personas de ¡todo Chile!. 
+		Solo basta con que dos personas hagan match y ya podrán empezar a conocerse.</p>
+		<p>¡Pero eso no es todo!... Creemos que la mejor forma de conocer a alguien es una cita con tu comida
+		favorita, por lo que queremos asegurarte la mejor experiencia con una
+		una gran cantidad de locales asociados, que incluyen <b>beneficios y descuentos exclusivos</b> para nuestros
+			usuarios. Puedes ver nuestro amplio catalogo junto a las experiencias de nuestros usuarios para elegir el 
+			<i>lugar ideal, para la cita ideal, con la persona ideal.</i><p>
+	<br><br>
+		<h2 class="title is-3">Algunos de nuestros locales</h2>
+
+	<div class="columns is-centered" style="padding: 2rem">
+	<div class="column is-7">
+		<div class="card">
+					<div class="card-image">
+						<figure class="image is-2by1">
+							<img src="https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="Placeholder image">
+						</figure>
+					</div>
+					<div class="card-content">
+						<div class="media">
+							<div class="media-content">
+								<p class="title is-4">
+									<%= link_to "Pamplona", local_path(2)%>
+								</p>
+							</div>
+						</div>
+
+						<div class="content">
+							La combinacion perfecta entre el sandwich de toda la vida y la elegancia de Francia.
+						</div>
+		</div>
+		</div>
+	</div>
+			<div class="column is-7">
+				<div class="card">
+					<div class="card-image">
+						<figure class="image is-2by1">
+							<img src="https://images.pexels.com/photos/1307698/pexels-photo-1307698.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="Placeholder image">
+						</figure>
+					</div>
+					<div class="card-content">
+						<div class="media">
+							<div class="media-content">
+								<p class="title is-4">
+									<%=link_to "Juan y Medio", local_path(1)%>
+								</p>
+							</div>
+						</div>
+
+						<div class="content">
+							El lugar donde podrás revivir ese inigualable sabor de la comida tipica chilena que solo tu abuela es capaz de lograr.
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="column is-7">
+				<div class="card">
+					<div class="card-image">
+						<figure class="image is-2by1">
+							<img src="https://images.pexels.com/photos/1449775/pexels-photo-1449775.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="Placeholder image">
+						</figure>
+					</div>
+					<div class="card-content">
+						<div class="media">
+							<div class="media-content">
+								<p class="title is-4">
+									<%= link_to "Pollos Hermanos", local_path(4)%>
+								</p>
+							</div>
+						</div>
+
+						<div class="content">
+							¿Sabias que el pollo se puede cocinar de +30 formas distintas? Ven y descubre el arte de comer pollo.
+						</div>
+					</div>
+				</div>
+			</div>
+	</div>
+</div>
+</section>

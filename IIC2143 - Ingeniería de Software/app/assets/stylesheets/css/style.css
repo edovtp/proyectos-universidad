@@ -1,0 +1,5 @@
+section.hero.is-bold{
+	background-image: url("../images/fondo.png"); 
+	background-size: cover;
+	background-position: center center; 
+}

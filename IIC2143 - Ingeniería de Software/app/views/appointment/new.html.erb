@@ -1,0 +1,38 @@
+<body>
+<div class="hero-body">
+  <div class="container has-text-centered">
+    <div class="column is-4 is-offset-4">
+      <h3 class="title">Proponer cita a <%=params[:cita]%></h3>
+      <div class="box">
+        <%= form_with(model: @appointment, url: create_appointment_path(params[:id], match_id: params[:match_id]), method: :post) do |f| %>
+
+          <div class="field">
+            <div class="control">
+              Local:
+              <div class="select is-fullwidth">
+                <%= f.select(:local_id, Local.all.where('aceptado = ?', true).collect {|c| [c.nombre, c.id]}) %>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              Fecha:
+              <%@current_date = Date.today%>
+              <%= f.date_field :fecha, class: "input", min: @current_date%>
+            </div>
+          </div>
+
+          <div class="button is-medium is-primary is-fullwidth" value="Ingresar">
+            <%= f.submit "Proponer Cita", class: "button is-medium is-primary is-fullwidth" %>
+          </div>
+          <br>
+          <div class="button is-medium is-link is-fullwidth">
+            <%= link_to "Volver", match_info_path(@user_id), class: "button is-link is-fullwidth is-medium"%>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+</body>

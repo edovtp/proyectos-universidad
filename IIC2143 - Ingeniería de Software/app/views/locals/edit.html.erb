@@ -1,0 +1,44 @@
+<section class="hero is-danger">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered"> Editar el local <%= @local.nombre%> </h1>
+      <h2 class="subtitle has-text-centered">En esta sección puedes editar los datos descriptivos de tu local</h2>
+      <div class="buttons is-centered">
+        <%= link_to 'Volver', local_path(@local.id), class: "button is-link is-rounded"%>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tabs is-centered">
+  <ul>
+    <li class="is-active"><a href="<%= edit_local_path(@local.id) %>">Datos</a></li>
+    <li><%= link_to 'Menus', local_menues_path(@local.id) %></li>
+    <li><%= link_to 'Imágenes', local_images_path(@local.id) %></li>
+  </ul>
+</div>
+
+<div class="columns">
+  <div class="column is-4"></div>
+  <div class="column is-4">
+    <div class="box">
+      <%= form_with(model: @local, url: local_path(@local.id), method: :patch) do |form| %>
+        <div class='field'>
+          <%= form.label :descripcion%>
+          <%= form.text_area :descripcion, class: "textarea"%>
+        </div>
+        <div class='field'>
+          <%= form.label :telefono%>
+          <%= form.text_field :telefono, autofocus: true, autocomplete: "telefono", placeholder: "Telefono", class: "input"%>
+        </div>
+        <div class='actions'>
+          <%= form.submit "Guardar cambios", class: "button is-primary"%>
+          <%= link_to "Eliminar local", local_path(@local.id), method: :delete, class: "button is-danger",
+          data: {confirm: "¿Estás seguro? \n Esta acción no es reversible"} %>
+        </div>
+      <%end%>
+    </div>
+  </div>
+
+  <div class="column is-4"></div>
+</div>

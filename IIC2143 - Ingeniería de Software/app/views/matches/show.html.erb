@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MatchMeat</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <style>
+    ul#interests li {
+      display:inline;
+    }
+  </style>
+</head>
+<body>
+<section class="hero is-danger">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered">Tus Matchs</h1>
+      <h2 class="subtitle has-text-centered">En esta sección puedes ver toda la información de tus matches</h2>
+    </div>
+  </div>
+</section>
+
+<br>
+<div class="tabs is-centered">
+  <ul>
+    <li><a href="<%=match_path(current_user.id)%>">Buscar Suerte</a></li>
+    <li class="is-active"><a href="<%=match_info_path(current_user.id)%>">Tus Matchs</a></li>
+  </ul>
+</div>
+
+<section class="section">
+<div class="columns">
+  <div class="column">
+    <div class="box" style="color: is-danger;">
+      <div class="content">
+        <h2><center> Mis match </center></h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th> Persona  </th>
+              <th> Telefono </th>
+              <th> Correo </th>
+              <th> Acción </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @match_todos.each do |match|%>
+              <% if match.user1_id == @user.id %>
+                <% @persona = User.find(match.user2_id) %>
+              <% else %>
+                <% @persona = User.find(match.user1_id) %>
+              <% end %>
+            <tr>
+              <% unless match.cita_realizada %>
+              <td> <%= link_to @persona.nombre, perfil_path(@persona.id), target: :_blank%> </td>
+              <td> <%= @persona.telefono %></td>
+              <td> <%= @persona.email %> </td>
+              <td> <%= link_to 'Proponer cita', new_appointment_path(@user.id, match_id: match.id, cita: @persona.nombre), method: :get, class: "button is-primary"%> </td>
+              <% end %>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class='column'>
+    <div class="box" style="color: is-danger;">
+      <div class="content">
+        <h2><center> Agenda de citas </center></h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th> Persona  </th>
+              <th> Lugar </th>
+              <th> Fecha </th>
+              <th> Acción </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @match_todos.each do |match|%>
+              <% @appointments = match.appointments.where('solicitante_id != ?', @user.id) %>
+              <% if match.user1_id == @user.id %>
+                <% @persona = User.find(match.user2_id) %>
+              <% else %>
+                <% @persona = User.find(match.user1_id) %>
+              <% end %>
+              <% @appointments.each do |appointment|%>
+                <% @lugar = Local.find(appointment.local_id) %>
+              <tr>
+                <% unless match.cita_realizada %>
+                <td> <%= link_to @persona.nombre, perfil_path(@persona.id), target: :_blank %> </td>
+                <td> <%= link_to @lugar.nombre, local_path(@lugar.id), target: :_blank %></td>
+                <td> <%= appointment.fecha.strftime("%d-%m-%Y") %> </td>
+                <td> <%= link_to 'Aceptar', accept_appointment_path(@user.id, appointment.id, accept: true), method: :put, class: "button is-success"%> /
+                  <%= link_to 'Rechazar', accept_appointment_path(@user.id, appointment.id, accept: false), method: :put , class: "button is-danger"%></td>
+                <% end %>
+              </tr>
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+

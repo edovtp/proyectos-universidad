@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MatchMeat</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+<body>
+
+<div class="hero-body">
+  <div class="container has-text-centered">
+    <div class="column is-4 is-offset-4">
+      <h3 class="title has-text-white">Editar Perfil</h3>
+      <div class="box">
+        <%= form_with(model: @user, url: perfil_path(@user.id), method: :patch) do |form| %>
+          <div class="field">
+            <div class= "control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+              Nombre:
+              <%= form.text_field :nombre, autofocus: true, autocomplete: "nombre", placeholder: "Nombre", class: "input" %>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-envelope"></i>
+              </span>
+              Correo:
+              <%= form.text_field :email, autofocus: true, autocomplete: "email", placeholder: "Email", class: "input" %>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-clipboard-list"></i>
+              </span>
+              Descripcion:
+              <%= form.text_area :descripcion, autofocus: true, autocomplete: "descripcion", placeholder: "Descripcion", class: "input" %>
+            </div>          
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="far fa-id-card"></i>
+              </span>
+              Edad:
+              <%= form.number_field :edad, autofocus: true, autocomplete: "edad", placeholder: "Edad", class: "input"%>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-mobile-alt"></i>
+              </span>
+              Numero celular:
+              <%= form.text_field :telefono, autofocus: true, autocomplete: "telefono", placeholder: "Telefono", class: "input"%>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-home"></i>
+              </span>
+              Comuna: 
+              <div class="select is-fullwidth">
+                <%= form.select(:commune_id, Commune.all.collect {|c| [c.nombre, c.id]}) %>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-venus-mars"></i>
+              </span>
+              Genero:
+              <div class="select is-fullwidth">
+                <%= form.select(:genero, ['Masculino', 'Femenino', 'Otro'])%>
+              </div>
+            </div>
+          </div>
+
+          <div class="button is-medium is-primary is-fullwidth" value="Ingresar">
+            <%= form.submit "Guardar Cambios", class: "button is-medium is-primary is-fullwidth"%>
+          </div>
+        <% end %>
+        <%= link_to 'Volver', perfil_path(@user.id), class: "button is-fullwidth is-danger is-light" %>
+</body>
+</html>

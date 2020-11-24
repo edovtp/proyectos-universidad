@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  match_id: 1
+  solicitante_id: 1
+  local_id: 1
+  fecha: 2020-05-30
+
+two:
+  match_id: 1
+  solicitante_id: 1
+  local_id: 1
+  fecha: 2020-05-30

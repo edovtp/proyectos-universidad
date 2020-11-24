@@ -1,0 +1,32 @@
+<section class="section">
+<div class="box">
+<h1 class="title is-5 has-text-centered">Comentarios</h1>
+
+<table class="table is-fullwidth is-striped">
+<thead>
+    <tr>
+    <th>Usuario</th>
+    <th>Local</th>
+    <th>Contenido</th>
+    <th colspan="3"> Acciones </th>
+    </tr>
+</thead>
+
+<tbody>
+    <% @comentarios.each do |comentario| %>
+    <tr>
+        <td><%= comentario.user.nombre %></td>
+        <td><%= comentario.local.nombre %></td>
+        <td><%= comentario.contenido %></td>
+        <td><%= link_to 'Eliminar comentario', comentario_path(comentario.id, :admin => true),  method: :delete, class: "button is-danger",
+        data: { confirm: "¿Estás seguro?"} %>
+        <%= link_to 'Ver usuario', perfil_path(comentario.user_id), class: "button is-link", target: :_blank%>
+        <%= link_to 'Ver local', local_path(comentario.local_id), class: "button is-link", target: :_blank%></td>
+    </tr>
+    <% end %>
+</tbody>
+</table>
+
+<%= link_to 'Volver al Panel', admin_path, class: "button is-link"%>
+</div>
+</section>

@@ -1,0 +1,16 @@
+<section class="section">
+	<div class="columns">
+		<div class="column"></div>
+		<div class="column is-4">
+			<h1 class="title has-text-centered">¿Qué deseas administrar?</h1>
+			<div class="list is-hoverable">
+				<%= link_to "Comunas", comunas_path, class: "list-item has-text-centered"%>
+				<%= link_to "Gustos", gustos_path, class: "list-item has-text-centered"%>
+				<%= link_to "Locales", admin_locales_path, class: "list-item has-text-centered"%>
+				<%= link_to "Usuarios", admin_usuarios_path, class: "list-item has-text-centered"%>
+				<%= link_to "Comentarios", comentarios_path, class: "list-item has-text-centered"%>
+				<%= link_to "Aceptar locales", admin_aceptar_locales_path, class: "list-item has-text-centered"%>
+			</div>
+		</div>
+		<div class="column"></div>
+</section>

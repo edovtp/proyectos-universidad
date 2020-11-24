@@ -1,0 +1,234 @@
+<style>
+.bm--card-equal-height {
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+}
+.bm--card-equal-height .card-footer {
+   margin-top: auto;
+}
+
+.buttons.is-centered {
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+</style>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Match and Meat</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+<section class="hero is-danger">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered"> Locales </h1>
+      <h2 class="subtitle has-text-centered"> En esta sección puedes ver todos los locales que nuestra aplicación tiene disponible para tus citas</h2>
+    </div>
+  </div>
+</section>
+<nav class="panel">
+  <%= form_tag local_index_path, :method => 'get' do %>
+  <p class="panel-heading">
+      Buscador de locales:
+    </p>
+    <div class="panel-block">
+
+      <%= text_field_tag :search, params[:search], class: "input" %>
+      <%= submit_tag "Search", :name => nil, class: "button is-link" %>
+      <a class="button is-link is-light" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Filtrar
+      </a>
+    </div>
+  <% end %>
+  </form>
+  <div class="collapse" id="collapseOne">
+      <%= form_tag local_index_path, :method => 'get' do %>
+      <div class="field-body">
+        &nbsp;&nbsp;&nbsp;
+        <div class="field">
+          <div class="control">
+            Comuna:
+            <div class="select is-fullwidth">
+              <% comunas = Commune.all.collect {|c| [c.nombre, c.id]} %>
+              <% comunas.unshift("Todas") %>
+              <%= select_tag(:commune_id, options_for_select(comunas)) %>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            Valoracion:
+            <div class="select is-fullwidth">
+              <%= select_tag(:valoracion, options_for_select(["Todas", "0-1", "1-2", "2-3", "3-4", "4-5"])) %>
+            </div>
+          </div>
+        </div>
+        <div>
+          <br>
+          <div><%= submit_tag "Aplicar Filtros", :name => nil, class: "button is-warning is-light" %></div>
+        </div>
+        &nbsp;&nbsp;&nbsp;
+      </div>
+      <% end %>
+  </div>
+</nav>
+
+<section class="section">
+  <div class="columns">
+    <% @locales[0..2].each do |local|%>
+    <div class="column">
+      <div class="card bm--card-equal-height">
+        <% @promedio = local.valuations.where("realizada = true").average(:puntuacion)%>
+        <% @cantidad_valoraciones = local.valuations.where("realizada = true").count %>
+        <% unless @promedio %>
+          <% @promedio = "(El local aún to tiene puntuaciones)"%>
+        <% else %>
+          <% @promedio = @promedio.round(1)%>
+          <% @promedio = " #{@promedio} / 5"%>
+        <% end %>
+        <div class="card-image">
+          <% @empty_images = local.images.count == 0%>
+          <% if @empty_images %>
+            <figure class="image is-5by3">
+              <img src="https://bulma.io/images/placeholders/800x480.png">
+            </figure>
+          <% else %>
+            <figure class="image is-5by3">
+              <%= image_tag(local.carousel_photo(0)) %>
+            </figure>
+          <% end %>
+        </div>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4"><%= local.nombre %></p>
+              <p class="subtitle is-6"><%= local.commune.nombre%></p>
+            </div>
+          </div>
+
+          <div class="content">
+            <p>
+            <strong><%= local.nombre %></strong> <small><%= local.commune.nombre %></small>
+            <br>
+            <strong> Puntuación: </strong> <%= @promedio %>
+            <%if @cantidad_valoraciones == 1 %>
+              de <%= @cantidad_valoraciones %> valoracion
+            <%elsif @cantidad_valoraciones != 0%>
+              de <%= @cantidad_valoraciones %> valoraciones
+            <% end %>
+            <br>
+            <strong>Descripcion: </strong>
+            <%= local.descripcion %>
+            </p>
+          </div>
+          <div class="buttons is-centered">
+            <%= link_to "Más información", local_path(local.id) , class: "button is-link"%>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% end %>
+    <%if @locales.length % 6 == 1 %>
+      <div class="column"></div>
+      <div class="column"></div>
+    <% elsif @locales.length % 6 == 2%>
+      <div class="column"></div>
+    <% end %>
+  </div>
+</section>
+
+<section class="section">
+  <div class="columns">
+    <%if @locales.length > 3%>
+      <% @locales[3..5].each do |local|%>
+      <div class="column">
+        <div class="card bm--card-equal-height">
+          <% @promedio = local.valuations.where("realizada = true").average(:puntuacion)%>
+          <% @cantidad_valoraciones = local.valuations.where("realizada = true").count %>
+          <% unless @promedio %>
+            <% @promedio = "(El local aún to tiene puntuaciones)"%>
+          <% else %>
+            <% @promedio = @promedio.round(1)%>
+            <% @promedio = " #{@promedio} / 5"%>
+          <% end %>
+          <div class="card-image">
+            <% @empty_images = local.images.count == 0%>
+            <% if @empty_images %>
+              <figure class="image is-5by3">
+                <img src="https://bulma.io/images/placeholders/800x480.png">
+              </figure>
+            <% else %>
+              <figure class="image is-5by3">
+                <%= image_tag(local.carousel_photo(0)) %>
+              </figure>
+            <% end %>
+            </figure>
+          </div>
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4"><%= local.nombre %></p>
+                <p class="subtitle is-6"><%= local.commune.nombre%></p>
+              </div>
+            </div>
+
+            <div class="content">
+              <p>
+              <strong><%= local.nombre %></strong> <small><%= local.commune.nombre %></small>
+              <br>
+              <strong> Puntuación: </strong> <%= @promedio %>
+              <%if @cantidad_valoraciones == 1 %>
+                de <%= @cantidad_valoraciones %> valoracion
+              <%elsif @cantidad_valoraciones != 0%>
+                de <%= @cantidad_valoraciones %> valoraciones
+              <% end %>
+              <br>
+              <strong>Descripcion: </strong>
+              <%= local.descripcion %>
+              </p>
+            </div>
+            <div class="buttons is-centered">
+              <%= link_to "Más información", local_path(local.id) , class: "button is-link is-centered"%>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% end %>
+    <% end %>
+    <%if @locales.length % 6 == 4%>
+      <div class="column"></div>
+      <div class="column"></div>
+    <% elsif @locales.length % 6 == 5%>
+      <div class="column"></div>
+    <% end %>
+  </div>
+</section>
+
+<div style="width:200px; margin:0 auto;">
+  <%= will_paginate @locales, :page_links => false, renderer: BulmaPagination::Rails, class: 'pagination is-rounded', :previous_label => 'Anterior', :next_label => 'Siguiente' %>
+</div>
+</body>
+
+
+
+

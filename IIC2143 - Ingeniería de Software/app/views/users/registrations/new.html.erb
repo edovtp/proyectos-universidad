@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MatchMeat</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+<body>
+<div class="hero-body has-bg-img">
+  <div class="container has-text-centered">
+    <div class="column is-4 is-offset-4">
+      <h3 class="title has-text-white">Registrarse</h3>
+      <div class="box">
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+        <% lista_comunas = [] %> 
+        <% Commune.all.each do |comuna| %>
+            <% lista_comunas.append(comuna.id, comuna.nombre) %> 
+        <% end %>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+              Nombre:
+              <%= f.text_field :nombre, autofocus: true, autocomplete: "nombre", placeholder: "Nombre", class: "input"%>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-envelope"></i>
+              </span>
+              Correo:
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Email", class: "input" %>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-mobile-alt"></i>
+              </span>
+              Numero celular:
+              <%= f.text_field :telefono, autofocus: true, autocomplete: "telefono", placeholder: "Incluya +569 (ejemplo: +56958333161)", class: "input" %>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="far fa-id-card"></i>
+              </span>
+              Edad:
+              <%= f.number_field :edad, autofocus: true, autocomplete: "edad", placeholder: "Edad", class: "input" %>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-home"></i>
+              </span>
+              Comuna:
+              <div class="select is-fullwidth">
+                <%= f.select(:commune_id, Commune.all.collect {|c| [c.nombre, c.id]}) %>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-venus-mars"></i>
+              </span>
+              Genero:
+              <div class="select is-fullwidth">
+                <%= f.select(:genero, ['Masculino', 'Femenino', 'Otro'])%>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <span class="icon is-small is-left">
+                <i class="fas fa-key"></i>
+              </span>
+              Contraseña:
+              <%= f.password_field :password, autocomplete: "new-password", placeholder: "Contraseña (6 caracteres mínimo)", class: "input" %>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Confirmar contraseña", class: "input" %>
+            </div>
+          </div>
+          <!-- Hasta aquí quede arreglando el codigo; OJO que cuando redirecciona se pierden iconos -->
+          <div class="button is-medium is-info is-fullwidth" value="Ingresar">
+            <%= f.submit "Registrarse", class: "button is-medium is-info is-fullwidth" %>
+          </div>
+        <% end %>
+      </div>
+      <p>
+        ¿Tienes una cuenta? 
+        <a href="./sign_in"> Ingresar</a>
+      </p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

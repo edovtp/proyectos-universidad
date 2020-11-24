@@ -1,0 +1,27 @@
+<section class="section">
+<div class="columns">
+  <div class="column"></div>
+  <div class="column is-4">
+    <div class="box">
+      <h1 class="title has-text-centered">Nuevo gusto</h1>
+        <%= form_with(model: @gusto, url: gustos_path(@gusto.id), method: :post) do |form| %>
+          <div class="field">
+            Nombre:
+            <%= form.text_field :nombre, class: "input"%>
+          </div>
+
+          <div class="field">
+            Descripción:
+            <%= form.text_area :descripcion, class: "textarea"%>
+          </div>
+
+          <div class="actions">
+            <%= form.submit 'Crear gusto', class: "button is-primary"%>
+            <%= link_to "Volver", gustos_path, class: "button is-link"%>
+          </div>
+        <% end %>
+    </div>
+  </div>
+  <div class="column"></div>
+</div>
+</section>

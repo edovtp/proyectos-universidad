@@ -1,0 +1,22 @@
+<section class="section">
+<div class="columns">
+    <div class="column"></div>
+    <div class="column is-6">
+        <div class="box">
+            <h1 class="title has-text-centered"> Nuevo comentario en <%= @local.nombre %></h1>
+            <%= form_with(model: @comentario, url: local_comentarios_path(@local.id), method: :post) do |form| %>
+                <div class="field">
+                    Comentario
+                    <%= form.text_area :contenido, class: "textarea is-danger"%>
+                </div>
+
+                <div class="actions">
+                    <%= form.submit 'Dejar Comentario', class: "button is-primary"%>
+                    <%= link_to "Volver", local_path(@local.id), class: "button is-link"%>
+                </div>
+            <% end %>
+        </div>
+    </div>
+    <div class="column"></div>
+</div>
+</section>

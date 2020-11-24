@@ -1,0 +1,26 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+.has-bg-img{
+	background-image: url("https://static.tildacdn.com/tild3735-3363-4861-b661-343539653564/tilda-gradient.png"); 
+	background-size: cover;
+	color: white; 
+}
+.very-blue {
+	color: blue;
+	}
+
+$pagination-disabled-background-color: blue;
+$pagination-current-background-color: black;

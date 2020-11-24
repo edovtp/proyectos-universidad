@@ -1,0 +1,27 @@
+<section class="section">
+  <div class="columns">
+    <div class="column"></div>
+    <div class="column is-4">
+      <div class="box">
+        <h1 class="title has-text-centered">Ver gusto</h1>
+        <p>
+          <strong>Nombre:</strong>
+          <%= @gusto.nombre %>
+        </p><br>
+
+        <p>
+          <strong>Descripción:</strong>
+          <%= @gusto.descripcion %>
+        </p><br>
+        <div class="actions">
+          <%= link_to "Editar", edit_gusto_path(@gusto.id), class: "button is-primary"%>
+          <%= link_to "Eliminar", gusto_path(@gusto.id), method: :delete, class: "button is-danger",
+          data: { confirm: "¿Estás seguro?"} %>
+          <%= link_to "Volver", gustos_path, class: "button is-link"%>
+        </div>
+      </div>
+
+    </div>
+    <div class="column"></div>
+  </div>
+</section>

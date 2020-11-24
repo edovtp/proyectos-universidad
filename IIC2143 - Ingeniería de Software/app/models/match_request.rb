@@ -1,0 +1,2 @@
+class MatchRequest < ApplicationRecord
+end

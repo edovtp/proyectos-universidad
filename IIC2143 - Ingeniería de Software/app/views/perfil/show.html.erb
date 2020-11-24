@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MatchMeat</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <style>
+    ul#interests li {
+      display:inline;
+    }
+  </style>
+</head>
+
+<section class="hero is-danger">
+  <div class="hero-body">
+      <h1 class="title has-text-centered">Mi perfil</h1>
+      <h2 class="subtitle has-text-centered">En esta sección puedes revisar tus datos, editarlos y subir una imágen que será mostrada a los demás usuarios. Acá también 
+      puedes inscribir tu propio local.</h2>
+  </div>
+</section>
+
+<div class="tabs is-centered">
+  <ul>
+    <li class="is-active"><a href="<%=perfil_path(current_user.id)%>">Mis Datos</a></li>
+    <li><%= link_to 'Mis Comentarios', perfil_comentarios_path(current_user.id)%></li>
+    <li><%= link_to 'Citas y Valoraciones Pendientes', perfil_valuations_path(current_user.id)%></li>
+  </ul>
+</div>
+
+
+<section class="section">
+  <div class="columns">
+    <div class="column is-1"></div>
+    <div class="column is-4">
+      <div class="box">
+        <h1 class="title has-text-centered">Mis datos</h1>
+        <article class="media">
+          <div class="media-content">
+            <div class="content">
+              <p><center>
+                <strong>Nombre:</strong>
+                <%= @user.nombre %>            
+              </center></p>
+
+              <p><center>
+                <strong>Email:</strong>
+                <%= @user.email %>
+              </center></p>
+
+              <p><center>
+                <strong>Descripcion:</strong>
+                <%= @user.descripcion %>
+              </center></p>
+
+              <p><center>
+                <strong>Edad:</strong>
+                <%= @user.edad %>
+              </center></p>
+
+              <p><center>
+                <strong>Telefono:</strong>
+                <%= @user.telefono %>
+              </center></p>
+
+              <p><center>
+                <strong>Comuna:</strong>
+                <%= @commune.nombre%>
+              </center></p>
+
+              <p><center>
+                <strong>Género:</strong>
+                <%= @user.genero %>
+              </center></p>
+
+              <p><center>
+                <% if not @interests_user.nil?%>
+                  <strong>Mis Gustos:</strong>
+                  <br>
+                  <br>
+                  <div class="field is-grouped is-grouped-multiline">    
+                    <% @interests_user.each do |interest| %>
+                      <div class="control">
+                        <div class="tags has-addons">
+                          <a class="tag is-danger"><%= interest.nombre %></a>
+                          <a href="<%=perfil_delete_interest_path(@user.id, interest.id)%>" class="tag is-delete"></a>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+                <hr>
+                <strong>Agregar gusto:</strong>
+                <br>
+                <br>
+                <%= form_with(model: @interests_user, url: perfil_edit_interest_path(@user.id), method: :patch) do |form| %>
+                  <div class="field">
+                    <div class="control">
+                      <div class="select is-fullwidth is-danger">
+                        <select name='id_interest'>
+                          <% @interests_not_user.each do |interest|%>
+                            <option value="<%= interest.id %>"><%= interest.nombre %></option>
+                          <% end %>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="button is-danger" value="Guardar interes">
+                    <%= form.submit "Guardar gusto", class: "button is-danger"%>
+                  </div>
+                <% end %>
+                <br>
+                
+
+              </center></p>     
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="column is-2">
+      <div class="box">
+        <h1 class="title has-text-centered">Acciones</h1>
+        <center>
+        <% if @local %>
+          <%= link_to 'Ver mi local', local_path(@local.id), class: 'button is-primary is-rounded'%>
+        <% else%>
+          <%= link_to 'Inscribir un local', new_local_path, class: 'button is-primary is-rounded' %>
+        <%end%>
+        </center></br>
+        <center>
+        <%= link_to 'Editar perfil', perfil_edit_path(@user.id), class: 'button is-link is-rounded' %>
+        </center></br>
+        <center>
+        <%= link_to 'Eliminar cuenta', perfil_path(@user.id), class: 'button is-danger is-rounded', method: :delete, data: { confirm: "¿Estas seguro? \n 
+        Esta acción no es reversible" }%>
+        </center></hr>
+      </div>
+    </div>
+
+    <div class="column is-4">
+      <div class="box">
+        <h1 class="title has-text-centered">Imagen de perfil</h1>
+        <center>
+        <figure class="image is-4by5">
+          <% unless @user.avatar.attached? %>
+            <img src="https://bulma.io/images/placeholders/480x600.png" width="480" height="600">
+          <% else %>
+            <%= image_tag(@user.match_avatar) %>
+          <% end %>
+        </figure>
+        </center>
+        
+        <%= form_with(model: @user, url: perfil_update_avatar_path(@user.id), method: :patch) do |form| %>
+          <div id="file-js-example" class="file is-centered">
+            <label class="file-label">
+              <%= form.file_field :avatar, accept: 'image/jpeg', class: "file-input"%>
+              <span class="file-cta">
+                <span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label">
+                  Elige un archivo...
+                </span>
+              </span>
+            </label>
+          </div>
+          <br>
+          <center>
+            <div class="button is-primary">
+              <%= form.submit "Guardar Imagen", class: "button is-primary"%>
+            </div>
+          </center>
+        <% end %>
+
+        <br>
+        <center>
+          <button class="button is-danger" <% unless @user.avatar.attached? %> disabled <% end %>>
+            <%= link_to_if @user.avatar.attached?, "Eliminar imagen", perfil_delete_avatar_path(@user.id), method: :delete, class: "button is-danger"%>
+          </button>
+        </center>
+      </div>
+    </div>
+  
+    <div class="column is-1"></div>
+  </div>
+</section>

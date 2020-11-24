@@ -1,0 +1,48 @@
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+<section class="hero is-danger">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered"> Mis comentarios </h1>
+      <h2 class="subtitle has-text-centered"> En esta sección puedes administrar los comentarios que has dejado en algún local</h2>
+    </div>
+  </div>
+</section>
+
+<div class="tabs is-centered">
+  <ul>
+    <li><%= link_to "Mis Datos", perfil_path(current_user.id)%></li>
+    <li class="is-active"><%= link_to 'Mis Comentarios', perfil_comentarios_path(current_user.id)%></li>
+    <li><%= link_to 'Citas y Valoraciones Pendientes', perfil_valuations_path(current_user.id)%></li>
+  </ul>
+</div>
+
+<section class="section">
+  <div class="columns">
+    <div class="column"></div>
+    <div class="column is-two-thirds">
+      <% @comentarios.each do |comentario|%>
+        <% local = Local.find(comentario.local_id)%>
+        <div class="box">
+            <article class="media">
+             <div class="media-content">
+                <div class="content">
+                    <p><small><i><%= comentario.created_at.strftime("%d-%m-%Y")%></i> a las <i><%= comentario.created_at.strftime("%H:%M")%>
+                    en <%= link_to local.nombre, local_path(local.id), target: :_blank%> </i></small>
+                    <br>
+                    <%= comentario.contenido %>
+                    </p>
+                </div>
+                <div class="buttons">
+                <% if user_signed_in? and current_user.id == comentario.user_id%>
+                <%= link_to 'Eliminar Comentario', local_comentario_path(comentario.local_id, comentario.id, perfil: true), method: :delete, class: "button is-danger"%>
+                <% end %>
+                </div>
+            </div>
+            </article>
+        </div>
+      <% end %>
+    </div>
+    <div class="column"></div>
+  </div>
+</section>

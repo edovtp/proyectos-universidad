@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  idsolicitud: 1
+  solicitado: 1
+  solicitante: 1
+
+two:
+  idsolicitud: 1
+  solicitado: 1
+  solicitante: 1

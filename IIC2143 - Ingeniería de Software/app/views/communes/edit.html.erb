@@ -1,0 +1,22 @@
+<section class="section">
+<div class="columns">
+  <div class="column"></div>
+  <div class="column is-4">
+    <div class="box">
+      <h1 class="title has-text-centered"> Editar comuna</h1>
+      <%= form_with(model: @comuna, url: comuna_path(@comuna.id), method: :patch) do |form| %>
+        <div class="field">
+          Nombre:
+          <%= form.text_field :nombre, class: "input"%>
+        </div>
+
+        <div class="actions">
+          <%= form.submit 'Guardar', class: "button is-primary"%>
+          <%= link_to "Volver", comuna_path(@comuna.id), class: "button is-link"%>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="column"></div>
+</div>
+</section>

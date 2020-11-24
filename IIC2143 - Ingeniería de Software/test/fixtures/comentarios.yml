@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  contenido: MyText
+  idusuario: 1
+  idlocal: 1
+
+two:
+  contenido: MyText
+  idusuario: 1
+  idlocal: 1

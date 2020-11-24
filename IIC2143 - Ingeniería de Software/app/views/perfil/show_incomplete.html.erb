@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MatchMeat</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <style>
+    ul#interests li {
+      display:inline;
+    }
+  </style>
+</head>
+
+<section class="hero is-danger">
+  <div class="hero-body">
+      <h1 class="title has-text-centered">Perfil de <%= @user.nombre %></h1>
+      <div class="buttons is-centered">
+        <% if current_user.admin%>
+          <%= link_to "Volver al Panel", admin_usuarios_path, class: "button is-link is-rounded"%>
+        <% else %>
+          <%= link_to "Volver", match_info_path(current_user.id), class: "button is-link is-rounded"%>
+        <% end %>
+      </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="columns">
+    <div class="column is-2"></div>
+    <div class="column is-4">
+      <div class="box">
+        <h1 class="title has-text-centered">Datos</h1>
+        <article class="media">
+          <div class="media-content">
+            <div class="content">
+              <p><center>
+                <strong>Nombre:</strong>
+                <%= @user.nombre %>            
+              </center></p>
+
+              <p><center>
+                <strong>Descripcion:</strong>
+                <%= @user.descripcion %>
+              </center></p>
+
+              <p><center>
+                <strong>Edad:</strong>
+                <%= @user.edad %>
+              </center></p>
+
+              <p><center>
+                <strong>Comuna:</strong>
+                <%= @commune.nombre%>
+              </center></p>
+
+              <p><center>
+                <strong>Género:</strong>
+                <%= @user.genero %>
+              </center></p>
+
+              <p><center>
+                <% if not @interests_user.nil?%>
+                  <strong>Gustos:</strong>
+                  <br>
+                  <br>
+                  <div class="field is-grouped is-grouped-multiline">    
+                    <% @interests_user.each do |interest| %>
+                      <div class="control">
+                        <div class="tags has-addons">
+                          <a class="tag is-danger"><%= interest.nombre %></a>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+                <hr>
+                <br>
+                <br>
+                
+
+              </center></p>     
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="column is-4">
+      <div class="box">
+        <h1 class="title has-text-centered">Imágen de perfil</h1>
+        <center>
+          <figure class="image is-4by5">
+            <% unless @user.avatar.attached? %>
+              <img src="https://bulma.io/images/placeholders/480x600.png" width="480" height="600">
+            <% else %>
+              <%= image_tag(@user.match_avatar) %>
+            <% end %>
+          </figure>
+        </center>
+
+      </div>
+    </div>
+  
+    <div class="column is-2"></div>
+  </div>
+</section>

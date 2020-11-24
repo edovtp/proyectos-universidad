@@ -1,0 +1,33 @@
+<section class="section">
+<div class="columns">
+  <div class="column"></div>
+  <div class="column is-4">
+    <div class="box">
+      <h1 class="title has-text-centered"> Comunas </h1>
+      <table class="table is-striped is-fullwidth">
+        <thead>
+          <tr>
+            <th> Nombre </th>
+            <th> Acciones </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @comunas.each do |comuna| %>
+            <tr>
+              <td><%= comuna.nombre %>
+              <td><%=link_to "Ver detalles", comuna_path(comuna.id), class: "button is-primary"%>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div class="actions">
+        <%= link_to "Crear comuna", new_comuna_path, class: "button is-primary"%>
+        <%= link_to "Volver al panel", admin_path, class: "button is-link"%>
+      </div>
+    </div>
+  </div>
+  <div class="column"></div>
+</div>
+</section>

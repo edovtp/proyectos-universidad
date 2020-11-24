@@ -1,0 +1,67 @@
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+<section class="hero is-danger">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered"> Editar el local <%= @local.nombre%> </h1>
+      <h2 class="subtitle has-text-centered"> En esta sección puedes subir hasta cinco imágenes que serán mostradas en la página principal de tu local</h2>
+      <div class="buttons is-centered">
+        <%= link_to 'Volver', local_path(@local.id), class: "button is-link is-rounded"%>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tabs is-centered">
+  <ul>
+    <li><%= link_to "Datos", edit_local_path(@local.id)%></li>
+    <li><%= link_to 'Menus', local_menues_path(@local.id) %></li>
+    <li class="is-active"><%= link_to 'Imágenes', local_images_path(@local.id) %></li>
+  </ul>
+</div>
+
+
+
+<div class="columns">
+  <div class="column is-2"></div>
+  <div class="column is-8">
+    <% (0...@local.images.count).each do |image_index| %>
+      <div class="box">
+        <center>
+          <% imagen = @local.images[image_index]%>
+          <%= image_tag(@local.carousel_photo(image_index)) %>
+        </center>
+        <br>
+        <center>
+          <%= link_to "Eliminar imagen", local_delete_images_path(@local.id, imagen.signed_id), 
+          class: "button is-danger", method: :delete, data: {confirm: "¿Estás seguro?" }%>
+        </center>
+      </div>
+    <% end %>
+    <div class="box">
+      <h1 class="title has-text-centered"> Cargar imágenes </h1>
+      <%= form_with(model: @local, url: local_add_images_path(@local.id), method: :patch) do |form| %>
+        <div class="file is-centered">
+          <label class="file-label">
+            <%= form.file_field :images, multiple: true, accept: 'image/jpeg', class: "file-input"%>
+            <span class="file-cta">
+              <span class="file-icon">
+                <i class="fas fa-upload"></i>
+              </span>
+              <span class="file-label">
+                Elige una o varias imágenes...
+              </span>
+            </span>
+          </label>
+        </div>
+        <br>
+        <center>
+          <div class="button is-primary">
+            <%= form.submit "Guardar Imagenes", class: "button is-primary"%>
+          </div>
+        </center>
+      <% end %>
+    </div>
+  </div>
+  <div class="column is-2"></div>
+</div>

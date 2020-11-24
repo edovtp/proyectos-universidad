@@ -1,0 +1,32 @@
+<section class="section">
+  <div class="columns">
+    <div class="column"></div>
+    <div class="column is-4">
+      <div class="box">
+        <h1 class="title has-text-centered">Gustos</h1>
+        <table class="table is-striped is-fullwidth">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @gustos.each do |gusto| %>
+              <tr>
+                <td><%= gusto.nombre %></td>
+                <td><%= link_to "Ver detalles", gusto_path(gusto.id), class: "button is-primary"%>
+              </tr>
+            <% end %>
+        </table>
+
+        <div class="actions">
+          <%= link_to "Crear gusto", new_gusto_path, class: "button is-primary"%>
+          <%= link_to "Volver al panel", admin_path, class: "button is-link"%>
+        </div>
+      </div>
+    </div>
+    <div class="column"></div> 
+  </div>
+</section>

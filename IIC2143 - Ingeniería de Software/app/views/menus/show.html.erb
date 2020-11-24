@@ -1,0 +1,55 @@
+<section class="hero is-danger">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered"> Editar el local <%= @local.nombre%> </h1>
+      <h2 class="subtitle has-text-centered"> En esta sección puedes editar y agregar los exquisitos menús que ofrece tu local </h2>
+      <div class="buttons is-centered">
+        <%= link_to 'Volver', local_path(@local.id), class: "button is-link is-rounded"%>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tabs is-centered">
+  <ul>
+    <li><%= link_to "Datos", edit_local_path(@local.id)%></li>
+    <li class="is-active"><%= link_to 'Menus', local_menues_path(@local.id) %></li>
+    <li><%= link_to 'Imágenes', local_images_path(@local.id) %></li>
+  </ul>
+</div>
+
+<div class="columns">
+  <div class="column is-3"></div>
+  <div class="column is-6">
+    <div class="box">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Menu</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @menus.each do |menu| %>
+            <tr>
+              <td><%= menu.nombre %></td>
+              <td><%= menu.descripcion%></td>
+              <td><%= menu.precio %></td>
+              <td><%= link_to 'Editar', edit_local_menu_path(@local.id, menu.id), class: "button is-primary"%></td>
+              <td><%= link_to 'Eliminar', local_menu_path(@local.id, menu.id), method: :delete, class: "button is-danger",
+                      data: { confirm: "¿Estás seguro?"} %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="actions">
+        <%= link_to "Agregar menú", new_local_menu_path(@local.id), class: "button is-primary"%>
+      </div>
+    </div>
+  </div>
+
+  <div class="column is-3"></div>
+</div>

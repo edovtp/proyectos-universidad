@@ -1,0 +1,33 @@
+<section class="section">
+<div class="columns">
+  <div class="column"></div>
+  <div class="column is-5">
+    <div class="box">
+      <h1 class="title has-text-centered"> Nuevo menú para <%= @local.nombre %></h1>
+      <%= form_with(model: @menu, url: local_menus_path(@local.id), method: :post) do |form| %>
+
+      <div class='field'>
+        Nombre:
+        <%= form.text_field :nombre, placeholder: "Nombre del menú", class: "input"%>
+      </div>
+
+      <div class='field'>
+        Descripción:
+        <%= form.text_area :descripcion, placeholder: "Ingrese aquí la descripción del menú", class: "textarea"%>
+      </div>
+
+      <div class='field'>
+        Precio:
+        <%= form.number_field :precio, class: "input"%>
+      </div>
+
+      <div class="actions">
+        <%= form.submit "Crear menú", class: "button is-primary"%>
+        <%= link_to "Volver", local_menues_path(@local.id), class: "button is-link"%>
+      </div>
+    <% end %>
+    </div>
+  </div>
+  <div class="column"></div>
+</div>
+</section>

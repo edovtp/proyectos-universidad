@@ -1,0 +1,75 @@
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+<section class="hero is-danger">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title has-text-centered"> Citas y Valoraciones Pendientes </h1>
+      <h2 class="subtitle has-text-centered"> En esta sección puedes ver tus citas pendientes, así como dejar una valoración cuando la fecha ya ha pasado.
+      Si te dejaron plantado o la cita no tuvo éxito, tienes la opción para hacernos saber eso :(</h2>
+    </div>
+  </div>
+</section>
+
+<div class="tabs is-centered">
+  <ul>
+    <li><%= link_to "Mis Datos", perfil_path(current_user.id)%></li>
+    <li><%= link_to 'Mis Comentarios', perfil_comentarios_path(current_user.id)%></li>
+    <li class="is-active"><%= link_to 'Citas y Valoraciones Pendientes', perfil_valuations_path(current_user.id)%></li>
+  </ul>
+</div>
+
+<section class="section">
+  <div class="columns">
+    <div class="column"></div>
+    <div class="column is-two-thirds">
+      <div class="box">
+      <div class="content">
+        <table class="table">
+          <thead>
+            <tr>
+              <th> Afortunad@ </th>
+              <th> Local  </th>
+              <th> Fecha </th>
+              <th> Acción </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @pending_valuations.each do |valuation|%>
+              <% @disabled = (valuation.fecha >= @current_date)%>
+              <% user = User.find(valuation.lucky_id)%>
+              <% local = Local.find(valuation.local_id)%>
+            <tr>
+              <td>
+                <% if user %>
+                  <%= link_to valuation.nombre, perfil_path(valuation.lucky_id), target: :_blank %>
+                <% else %>
+                  <%= valuation.nombre %>
+                <% end %>
+              </td>
+              <td>
+                <% if local %>
+                  <%= link_to valuation.local_name, local_path(valuation.local_id), target: :_blank %>
+                <% else %>
+                  <%= valuation.local_name %>
+                <% end %>
+              </td>
+              <td> <%= valuation.fecha %></td>
+              <td> 
+                <button class="button is-primary" <%if @disabled%> disabled <% end %>>
+                  <%= link_to_unless @disabled, 'Dejar valoración', edit_local_valoracione_path(valuation.local.id, valuation.id), class: "button is-primary"%>
+                </button>
+                <button class="button is-danger" <% if @disabled %> disabled <% end %>>
+                  <%= link_to_unless @disabled, "Cita no realizada", local_valoracione_path(valuation.local.id, valuation.id), class: "button is-danger",
+                  method: :delete, data: { confirm: "¿Estas seguro?"}%>
+                </button>
+              </td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </div>
+    <div class="column"></div>
+  </div>
+</section>

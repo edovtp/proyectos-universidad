@@ -1,0 +1,35 @@
+<section class="hero is-danger">
+  <nav class="navbar is-spaced" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-menu">
+        <div class="navbar-start">
+          <span class="icon">
+            <i class="fas fa-fire is-size-3"></i>
+          </span>
+          <span><%= link_to 'Match & Meat', root_path, class: 'navbar-item has-text-white is-size-4', style: "font-weight:bold"%></span>
+          <span><%= link_to 'Locales', local_index_path(:search=>""), class: 'navbar-item is-size-5'%></span>
+          <% if user_signed_in? %>
+            <%= link_to 'Match', match_path(current_user.id), class: 'navbar-item is-size-5'%>
+            <%= link_to 'Mi Perfil', perfil_path(current_user.id), class: 'navbar-item is-size-5'%>
+          <% end %>
+          <% if user_signed_in? and current_user.admin%>
+            <%= link_to 'Administrar', admin_path, class: 'navbar-item is-size-5'%>
+          <% end %>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <% unless user_signed_in? %>
+                <%= link_to 'Iniciar Sesion', new_user_session_path, class: 'button is-link is-size-6' %>
+                <strong><%= link_to 'Registrarse', new_user_registration_path, class: 'button is-link is-light is-size-6' %></strong>
+              <% end %>
+              <% if user_signed_in? %>
+                <strong><%= link_to 'Cerrar Sesion', destroy_user_session_path, method: :delete, class: 'button is-danger is-light is-size-6' %></strong>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</section>

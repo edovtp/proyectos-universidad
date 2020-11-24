@@ -1,0 +1,215 @@
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<script>
+
+  var marker;
+
+  function initMap() {
+    var myLatLng = {lat: <%=@local.lat%>, lng: <%=@local.long%>};
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 17,
+      center: myLatLng
+    });
+
+    var contentString =
+    '<h1><b><%=@local.nombre%></b></h1>'+
+    '<p><b>Direccion:</b> <%=@local.direccion%></p>'+
+    '<p><b>Telefono:</b> <%=@local.telefono%></p>'+
+    '<p><b>Descripcion:</b> <%=@local.descripcion%></p>';
+
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });  
+
+    marker = new google.maps.Marker({
+      position: myLatLng,
+      map: map,
+      draggable: true,
+      animation: google.maps.Animation.DROP,
+      title: '<%=@local.nombre%>'
+    });
+    marker.addListener('click', function(){
+      infowindow.open(map, marker);
+    });
+
+    marker.addListener('mouseover', toggleBounce);
+  }
+
+  function toggleBounce() {
+    if (marker.getAnimation() !== null) {
+      marker.setAnimation(null);
+    } else {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+  }
+</script>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsShmfQR57ZbpPbdBYV0yUiG9NfaAE1q8&callback=initMap">
+</script>
+
+<section>
+  <div class="hero is-danger">
+    <div class="hero-body">
+      <h1 class="title has-text-centered"> <%= @local.nombre %></h1>
+      <h2 class="subtitle has-text-centered"> <%= @local.descripcion %></h2>
+      <h2 class="subtitle has-text-centered"> Comuna: <%= @local.commune.nombre %></h2>
+      <h2 class="subtitle has-text-centered"> Teléfono: <%= @local.telefono %></h2>
+      <h3 class="subtitle has-text-centered"> Puntuación: <%= @promedio %>
+        <%if @cantidad_valoraciones == 1 %>
+          de <%= @cantidad_valoraciones %> valoracion
+        <%elsif @cantidad_valoraciones != 0%>
+          de <%= @cantidad_valoraciones %> valoraciones
+        <% end %></p></h3>
+      <div class="buttons is-centered">
+        <%= link_to 'Volver', local_index_path, class: "button is-link is-rounded"%>
+        <% if user_signed_in? and current_user.id == @local.user_id%>
+          <%= link_to 'Editar', edit_local_path(@local.id), class: "button is-primary is-rounded"%>
+        <% end%>
+      </div>
+    </div>
+    <br>
+  </div>
+</section>
+
+<section class="section">
+  <div class="columns">
+  <div class="column is-6">
+    <div id="myCarousel" class="carousel slide" data-ride="carousel" style="margin:18px;">
+      <% if @empty_images%>
+        <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        </ol>
+
+        <div class="carousel-inner">
+          <div class="item active">
+            <figure class="image is-5by3">
+              <img src="https://bulma.io/images/placeholders/800x480.png">
+            </figure>
+          </div>
+        </div>
+      <% else %>
+        <ol class="carousel-indicators">
+          <li data-taget="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+          <% (1...@images.count).each do |i|%>
+            <li data-target="#carouselExampleIndicators" data-slide-to=<%= "#{i}" %>></li>
+          <% end %>
+        </ol>
+        
+        <div class="carousel-inner">
+          <div class="item active">
+            <figure class="image is-5by3">
+              <%= image_tag(@local.carousel_photo(0)) %>
+            </figure>
+          </div>
+          <% unless @one_image %>
+            <% (1...@images.count).each do |index_image|%>
+              <div class="item">
+                <figure class="image is-5by3">
+                  <%= image_tag(@local.carousel_photo(index_image)) %>
+                </figure>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Left and right controls -->
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>
+  <div class="column"></div>
+      <div id="map" style="width:45%;display:block;margin:30px;"></div>
+  </div>
+
+<div class="columns">
+  <div class="column"></div>
+  <div class="column is-two-thirds">
+    <div class="box">
+    <h1 class="title has-text-centered"> Menus ofrecidos </h1>
+      <div class="media-content">
+        <div class="content">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Menú</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+              </tr>
+            </thead> 
+            <tbody>
+              <% @menus.each do |menu| %>
+                <tr>
+                  <td><%= menu.nombre %></td>
+                  <td><%= menu.descripcion%></td>
+                  <td>$<%= menu.precio%></td>
+                </tr>
+              <% end %>
+            </tbody> 
+          </table> 
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="column"></div>
+</div>
+</section>
+
+<div class="notification is-fluid is-danger">
+  <h1 class="title has-text-centered"> Comentarios </h1>
+  <div class="buttons is-centered">
+    <% if user_signed_in? and current_user.id != @local.user_id %>
+      <%=link_to "Nuevo Comentario", new_local_comentario_path(@local.id), class: "button is-primary is-rounded"%>
+    <% end %>
+  </div>
+</div>
+<div class="columns">
+  <div class="column"></div>
+  <div class="column is-two-thirds">
+    <% @comentarios.each do |comentario|%>
+    <div class="box">
+      <article class="media">
+        <div class="media-left">
+          <figure class="image is-128x128">
+            <% unless comentario.user.avatar.attached? %>
+              <img src="https://bulma.io/images/placeholders/128x128.png" alt="Imagen de perfil" class="is-rounded">
+            <% else %>
+              <%= image_tag comentario.user.comment_avatar, class: "is-rounded" %>
+            <% end %>
+          </figure>
+        </div>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong><%= comentario.user.nombre %></strong> 
+              <small><i><%= comentario.created_at.strftime("%d-%m-%Y")%></i> a las <i><%= comentario.created_at.strftime("%H:%M")%></i></small>
+              <br>
+              <%= comentario.contenido %>
+            </p>
+          </div>
+          <div class="buttons">
+          <% if user_signed_in? and current_user.id == comentario.user_id%>
+            <%= link_to 'Eliminar Comentario', local_comentario_path(@local.id, comentario.id), method: :delete, class: "button is-danger"%>
+          <% end %>
+          </div>
+        </div>
+      </article>
+    </div>
+    <% end %>
+  </div>
+  <div class="column"></div>
+</div>
+</section>
+

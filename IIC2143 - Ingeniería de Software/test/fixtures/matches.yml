@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user1_id: 1
+  user2_id: 1
+  cita_realizada: false
+  appointment_id: 1
+
+two:
+  user1_id: 1
+  user2_id: 1
+  cita_realizada: false
+  appointment_id: 1

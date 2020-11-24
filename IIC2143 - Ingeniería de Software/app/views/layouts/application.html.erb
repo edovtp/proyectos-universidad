@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Match and Meat</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+</head>
+<body>
+  <%= render 'layouts/navbar' %>
+  <% if notice%>
+      <section class="notification is-danger is-light is-radiusless", style="margin-bottom:0;">
+        <p id="notice" class="has-text-centered"><strong><%= notice %></strong></p>
+      </section>
+  <% end %>
+  <%= yield %>
+</body>
+</html>

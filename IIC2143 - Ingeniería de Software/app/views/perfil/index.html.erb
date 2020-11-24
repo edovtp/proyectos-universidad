@@ -1,0 +1,33 @@
+<section class="section">
+<div class="box">
+<h1 class="title is-5 has-text-centered">Usuarios</h1>
+
+<table class="table is-fullwidth is-striped">
+<thead>
+    <tr>
+    <th>Email</th>
+    <th>Nombre</th>
+    <th>Descripcion</th>
+    <th>Edad</th>
+    <th>Acciones</th>
+    </tr>
+</thead>
+
+<tbody>
+    <% @users.each do |usuario| %>
+    <tr>
+        <td><%= usuario.email %></td>
+        <td><%= usuario.nombre %></td>
+        <td><%= usuario.descripcion%></td>
+        <td><%= usuario.edad %></td>
+        <td><%= link_to 'Eliminar cuenta', perfil_path(usuario.id),  method: :delete, class: "button is-danger",
+                data: {confirm: "¿Estás seguro?"} %>
+            <%= link_to 'Ver cuenta', perfil_path(usuario.id), class: "button is-primary"%></td>
+    </tr>
+    <% end %>
+</tbody>
+</table>
+
+<%= link_to 'Volver al Panel', admin_path, class: "button is-link"%>
+</div>
+</section>

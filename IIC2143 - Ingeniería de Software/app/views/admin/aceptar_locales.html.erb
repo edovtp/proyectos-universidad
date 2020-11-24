@@ -1,0 +1,35 @@
+<section class="section">
+<div class="box">
+<h1 class="title is-5 has-text-centered">Aceptar locales</h1>
+
+<table class="table is-fullwidth is-striped">
+<thead>
+    <tr>
+    <th>Nombre</th>
+    <th>Descripción</th>
+    <th>Dirección</th>
+    <th>Comuna</th>
+    <th>Teléfono</th>
+    <th>Acciones</th>
+    </tr>
+</thead>
+
+<tbody>
+    <% @locales_pendientes.each do |local| %>
+    <tr>
+        <td><%= local.nombre %></td>
+        <td><%= local.descripcion %></td>
+        <td><%= local.direccion %></td>
+        <td><%= local.commune.nombre%></td>
+        <td><%= local.telefono %></td>
+        <td><%= link_to 'Aceptar local', admin_aceptar_local_path(local.id), method: :patch, class: "button is-primary"%>
+            <%= link_to 'Rechazar local', admin_delete_local_path(local.id, aceptado: "no"), method: :delete, class: "button is-danger",
+            data: { confirm: "¿Estás seguro?"}%></td>
+    </tr>
+    <% end %>
+</tbody>
+</table>
+
+<%= link_to 'Volver al Panel', admin_path, class: "button is-link"%>
+</div>
+</section>

@@ -1,0 +1,30 @@
+AllCops:
+  Include:
+    - config/routes.rb
+    - app/models/*
+  Exclude:
+    - db/**
+    #- config/**/*
+    - script/**
+    - vendor/**/*
+    - tmp/**
+    - test/**
+    - storage/**/*
+    - public/*
+    - lib/**
+    - bin/**
+
+Layout/LineLength:
+  Max: 100
+
+Layout/IndentationWidth:
+  Width: 2
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Max: 50
