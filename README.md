@@ -8,4 +8,4 @@ Este repositorio contiene la mayoría de proyectos que he realizado (o en conjun
 
 - IIC2143 Ingeniería de Software: En este proyecto tuvimos que elaborar una aplicación web de citas llamada Match&Meat. Esta aplicación web fue desarrollada a través del framework Ruby on Rails, manteniendo una base de datos en PostgreSQL y cargada en Heroku.
 
-- IIC2413 Bases de Datos: En este proyecto tuvimos que elaborar una aplicación web de puertos que ayudaba a la gestión de Navieras, Buques, Instalaciones y Puertos del país. Esta aplicación web fue desarrollada usando PHP, conectándose a dos bases de datos, una postgresql y una mongodb. Además, se desarrolló una API de la aplicación usando el framework Flask en Python.
+- IIC2413 Bases de Datos: En este proyecto tuvimos que elaborar una aplicación web de puertos que ayudaba a la gestión de Navieras, Buques, Instalaciones y Puertos del país. Esta aplicación web fue desarrollada usando PHP, conectándose a dos bases de datos, una postgresql y una mongodb. Además, se desarrolló una API de la aplicación usando el framework Flask en Python, que finalmente es consumida por la aplicación escrita en PHP.
