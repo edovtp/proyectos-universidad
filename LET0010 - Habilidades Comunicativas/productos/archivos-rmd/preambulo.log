@@ -1,0 +1,456 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.7.21)  25 NOV 2020 16:00
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**preambulo.tex
+(./preambulo.tex
+LaTeX2e <2020-02-02> patch level 2
+L3 programming layer <2020-02-14>
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1 \begin{minipage}{2cm}
+                         
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.2     \includegraphics
+                        [width=1.2\textwidth]{archivos-rmd/logo-uc.jpg}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no w in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no . in font nullfont!
+Missing character: There is no 2 in font nullfont!
+! Missing number, treated as zero.
+<to be read again> 
+                   ]
+l.2     \includegraphics[width=1.2\textwidth]
+                                             {archivos-rmd/logo-uc.jpg}
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   ]
+l.2     \includegraphics[width=1.2\textwidth]
+                                             {archivos-rmd/logo-uc.jpg}
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+Missing character: There is no ] in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no v in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no - in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no / in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no - in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no . in font nullfont!
+Missing character: There is no j in font nullfont!
+Missing character: There is no p in font nullfont!
+Missing character: There is no g in font nullfont!
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 3.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 3.
+
+Overfull \hbox (76.9055pt too wide) in paragraph at lines 1--4
+[]$[]$ 
+ []
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.5 \begin{flushleft}
+                     
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 5--5
+[] 
+ []
+
+
+Overfull \hbox (52.28304pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 Pontificia 
+ []
+
+
+Overfull \hbox (21.07207pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 Uni- 
+ []
+
+
+Overfull \hbox (21.511pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 ver- 
+ []
+
+
+Overfull \hbox (11.3777pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 si- 
+ []
+
+
+Overfull \hbox (18.39995pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 dad 
+ []
+
+
+Overfull \hbox (45.79416pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 Cat[]olica 
+ []
+
+
+Overfull \hbox (11.82217pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 de 
+ []
+
+
+Overfull \hbox (27.7276pt too wide) in paragraph at lines 6--7
+\OT1/cmr/m/sc/10 Chile  
+ []
+
+
+Overfull \hbox (44.22179pt too wide) in paragraph at lines 7--7
+[]\OT1/cmr/m/sc/10 LET0010 
+ []
+
+
+Overfull \hbox (3.77774pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 - 
+ []
+
+
+Overfull \hbox (18.04987pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 Ha- 
+ []
+
+
+Overfull \hbox (17.73323pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 bil- 
+ []
+
+
+Overfull \hbox (6.79994pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 i- 
+ []
+
+
+Overfull \hbox (28.55545pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 dades 
+ []
+
+
+Overfull \hbox (17.99431pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 Co- 
+ []
+
+
+Overfull \hbox (17.37769pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 mu- 
+ []
+
+
+Overfull \hbox (24.97765pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 nica- 
+ []
+
+
+Overfull \hbox (12.71101pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 ti- 
+ []
+
+
+Overfull \hbox (15.9555pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 vas 
+ []
+
+
+Overfull \hbox (23.19989pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 para 
+ []
+
+
+Overfull \hbox (15.77208pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 Es- 
+ []
+
+
+Overfull \hbox (50.99973pt too wide) in paragraph at lines 7--7
+\OT1/cmr/m/sc/10 tad[]^^Psticos  
+ []
+
+Missing character: There is no S in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no S in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no 0 in font nullfont!
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no 0 in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 12--12
+[] 
+ []
+
+! Undefined control sequence.
+<argument>  \Large 
+                   {Identificación de variables influyentes en el rendimien...
+l.13 ...ento escolar de la educación secundaria}}
+                                                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (26.24292pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 Iden- 
+ []
+
+
+Overfull \hbox (11.49994pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 ti- 
+ []
+
+
+Overfull \hbox (10.22217pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 fi- 
+ []
+
+
+Overfull \hbox (31.14565pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 caci^^Son 
+ []
+
+
+Overfull \hbox (11.65967pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 de 
+ []
+
+
+Overfull \hbox (22.78459pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 vari- 
+ []
+
+
+Overfull \hbox (24.9804pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 ables 
+ []
+
+
+Overfull \hbox (13.4166pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 in- 
+ []
+
+
+Overfull \hbox (44.14699pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 fluyentes 
+ []
+
+
+Overfull \hbox (11.65967pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 en 
+ []
+
+
+Overfull \hbox (8.46524pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 el 
+ []
+
+
+Overfull \hbox (60.31915pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 rendimiento 
+ []
+
+
+Overfull \hbox (13.6402pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 es- 
+ []
+
+
+Overfull \hbox (14.69437pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 co- 
+ []
+
+
+Overfull \hbox (13.52075pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 lar 
+ []
+
+
+Overfull \hbox (11.65967pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 de 
+ []
+
+
+Overfull \hbox (8.78465pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 la 
+ []
+
+
+Overfull \hbox (15.49298pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 ed- 
+ []
+
+
+Overfull \hbox (10.22217pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 u- 
+ []
+
+
+Overfull \hbox (31.14565pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 caci^^Son 
+ []
+
+
+Overfull \hbox (13.6402pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 se- 
+ []
+
+
+Overfull \hbox (21.7221pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 cun- 
+ []
+
+
+Overfull \hbox (25.49983pt too wide) in paragraph at lines 13--14
+ \OT1/cmr/bx/n/10 daria 
+ []
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 16--16
+[] 
+ []
+
+Missing character: There is no : in font nullfont!
+Missing character: There is no R in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no v in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no Q in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no a in font nullfont!
+
+Overfull \hbox (47.74419pt too wide) in paragraph at lines 17--17
+ \OT1/cmr/bx/n/10 Profesora
+ []
+
+Missing character: There is no : in font nullfont!
+Missing character: There is no E in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no V in font nullfont!
+LaTeX Font Info:    Trying to load font information for +cmr on input line 18.
+LaTeX Font Info:    No file cmr.fd. on input line 18.
+
+LaTeX Font Warning: Font shape `/cmr/m/n' undefined
+(Font)              using `/cmr/m/n' instead on input line 18.
+
+! Corrupted NFSS tables.
+wrong@fontshape ...message {Corrupted NFSS tables}
+                                                  error@fontshape else let f...
+l.18 \noindent \textbf{Nombre}: Eduardo Vá
+                                           squez
+This error message was generated by an \errmessage
+command, so I can't give any explicit help.
+Pretend that you're Hercule Poirot: Examine all clues,
+and deduce the truth by order and method.
+
+
+LaTeX Font Warning: Font shape `/cmr/m/n' undefined
+(Font)              using `OT1/cmr/m/n' instead on input line 18.
+
+Missing character: There is no s in font nullfont!
+Missing character: There is no q in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no z in font nullfont!
+
+Overfull \hbox (40.40953pt too wide) in paragraph at lines 18--19
+ \OT1/cmr/bx/n/10 Nombre
+ []
+
+
+Overfull \hbox (10.00003pt too wide) in paragraph at lines 18--19
+ \/cmr/m/n/10 ^^Sa
+ []
+
+)
+! Emergency stop.
+<*> preambulo.tex
+                 
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 36 strings out of 481239
+ 568 string characters out of 5920377
+ 238559 words of memory out of 5000000
+ 15401 multiletter control sequences out of 15000+600000
+ 532947 words of font info for 26 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 20i,2n,18p,144b,136s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!
