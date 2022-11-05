@@ -4,6 +4,8 @@ Este repositorio contiene alguno de los proyectos que he realizado (o en conjunt
 
 - EYP2307 Análisis de Regresión: Se nos entregó una base de datos sobre el número de comparticiones en redes sociales de diferentes artículos de la página Mashable, con el fin de realizar un análisis de regresión sobre estos. Se usaron métodos de regresión simple, regresión múltiple, análisis de supuestos, análisis de puntos de influencia, selección automática de variables, LASSO, criterios de comparación y análisis descriptivos.
 
+- EYP3417 Estadística Espacial: Aplicación de modelos lineales generalizados mixtos, introduciendo efectos espaciales mediante modelos CAR, para identificar variables que influyen en la tasa de participación electoral dentro de Santiago.
+
 - LET0010 Habilidades Comunicativas para Estadísticos: El proyecto está enfocado en la preparación de informes y presentaciones estadísticas, haciendo uso de herramientas como ggplot y dplyr, así como un correcto uso de carpetas para mantener un espacio de trabajo ordenado.
 
 - IIC2143 Ingeniería de Software: En este proyecto tuvimos que elaborar una aplicación web de citas llamada Match&Meat. Esta aplicación web fue desarrollada a través del framework Ruby on Rails, manteniendo una base de datos en PostgreSQL y cargada en Heroku.
