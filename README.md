@@ -10,6 +10,12 @@ Este repositorio contiene alguno de los proyectos que he realizado (o en conjunt
 
 - **IIC2143 Ingeniería de Software**: En este proyecto tuvimos que elaborar una aplicación web de citas llamada Match&Meat. Esta aplicación web fue desarrollada a través del framework Ruby on Rails, manteniendo una base de datos en PostgreSQL y cargada en Heroku.
 
+<<<<<<< HEAD
 - **IIC2413 Bases de Datos**: En este proyecto tuvimos que elaborar una aplicación web de puertos que ayudaba a la gestión de Navieras, Buques, Instalaciones y Puertos del país. Esta aplicación web fue desarrollada usando PHP, conectándose a dos bases de datos, una postgresql y una mongodb. Además, se desarrolló una API de la aplicación usando el framework Flask en Python, que finalmente es consumida por la aplicación escrita en PHP.
 
 - **EYP3207 - Métodos Bayesianos II**: implementación de modelos de regresión robusta, utilizando el paradigma bayesiano, en el Modelo de Valoración de Activos Financieros (CAPM). Los modelos fueron implementados en Stan.
+=======
+- IIC2413 Bases de Datos: En este proyecto tuvimos que elaborar una aplicación web de puertos que ayudaba a la gestión de Navieras, Buques, Instalaciones y Puertos del país. Esta aplicación web fue desarrollada usando PHP, conectándose a dos bases de datos, una postgresql y una mongodb. Además, se desarrolló una API de la aplicación usando el framework Flask en Python, que finalmente es consumida por la aplicación escrita en PHP.
+
+Ver además mi repositorio para mi [Taller de Iniciación Científica](https://github.com/edovtp/MAT2095-TIC), que considera la implementación de diferentes algoritmos relacionados a Dirichlet Process Mixture Models (DPM) en Julia.
+>>>>>>> 9735e079919a8ad48952620b336541faf35660d6
