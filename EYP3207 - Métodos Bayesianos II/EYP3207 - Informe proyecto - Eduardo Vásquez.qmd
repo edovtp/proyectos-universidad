@@ -1,0 +1,410 @@
+---
+format: 
+    pdf:
+        number-sections: true
+        include-before-body: title_page.tex
+crossref: 
+  fig-title: Fig.
+  tbl-title: Tabla
+bibliography: references.bib
+---
+
+```{r librerias y datos, include=FALSE}
+library(tidyverse)
+library(readr)
+library(rstan)
+library(loo)
+library(bayesplot)
+library(patchwork)
+
+
+set.seed(219)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+# Carga de datos
+retornos <- read_csv("data/retornos.csv")
+```
+
+# Introducción
+
+## Análisis de retornos
+
+El análisis de retornos de activos dentro del mercado de capitales, tales como bonos, acciones y derivados, es una de las piezas básicas para la construcción de portafolios de inversión. Además, bajo ciertos supuestos, el análisis de estos retornos también nos entrega información general acerca del mercado en que se sitúan.
+
+En el problema de portafolios la idea es encontrar las proporciones o pesos en que se debe adquirir cada uno de $N$ activos, para así obtener un retorno esperado fijo, un riesgo fijo (que se mide a partir de la varianza) o cumplir algún criterio de optimalidad. Luego, el problema estadístico principal es la estimación de la media y la varianza de cada uno de estos $N$ activos, junto con las correlaciones entre cada par.
+
+Supongamos ahora la existencia de un activo libre de riesgo, que normalmente son los bonos que emiten los bancos centrales de cada país. En este caso debemos proceder en dos etapas: elegir un portafolio de activos riesgosos, para luego elegir la proporción que se invertirá en el portafolio, quedando la otra parte invertida en el activo libre de riesgo. Considerando esta situación, existe un resultado sumamente importante, el cual nos indica que el portafolio óptimo es aquel que maximiza la **razón de Sharpe**, definida por
+
+$$
+\text{SR} = \frac{\mu_p - \mu_f}{\sigma_p}
+$$
+
+donde $\mu_p$ corresponde al retorno esperado del portafolio, $\mu_f$ es el retorno del activo libre de riesgo, y $\sigma_p$ es la desviación estándar del retorno del portafolio, denominado **riesgo**. Finalmente, lo que dependerá de cada inversor es la proporción que invertirán en este portafolio, dejando el resto en el activo libre de riesgo.
+
+En la Figura 1 se ilustra un ejemplo de dos activos, donde la frontera de posibles portafolios con los dos activos riesgosos está en naranjo, con el portafolio óptimo marcado en morado. Luego, podemos mezclar este portafolio con el activo libre de riesgo para situarnos en algún punto de la recta roja, donde notamos que está siempre por sobre la frontera de posibles portafolios.
+
+![Ilustración del portafolio óptimo junto con la frontera eficiente](figuras/01 - Portafolio óptimo.jpg){height="180"}
+
+## Modelo CAPM
+
+Bajo algunos supuestos, como que todos los inversores tengan acceso completo a la información, así como equilibrio de mercado, lo anterior nos dice que **todos** los inversores deben elegir el mismo portafolio, que es el visto en la sección anterior, y que las diferencias vienen dadas solo por la proporción que se decide invertir en el activo libre de riesgo.
+
+De lo anterior se obtiene un resultado bastante importante, que será el enfoque de este informe, denominado el **Modelo de Valoración de Activos Financieros** (CAPM), desarrollado de forma independiente por Jack Treynor, William Sharpe, John Lintner y Jan Mossin. Una de las implicancias de este modelo es el siguiente resultado: sea $R_i$ el retorno de un activo específico, $R_m$ el retorno de mercado y $R_f$ el retorno del activo libre de riesgo. Luego,
+
+$$
+R_i - R_f = \beta_i(R_m - R_f) + \varepsilon_i, \quad i = 1, ...n
+$$
+
+para alguna variable aleatoria $\varepsilon_i$ de media 0 y con $\text{Cov}(\varepsilon_i, R_m) = 0$.
+
+Ahora, normalmente no tenemos información directa de los retornos de mercado, por lo que se considera un proxy, que generalmente corresponde a algún índice, como el S&P500 en Estados Unidos, o el IPSA en Chile. Además, se agrega un intercepto en el modelo, quedando entonces, denotando por $Y_i = R_i - R_f$ el retorno ajustado y $x_i = R_m - R_f$ el retorno de mercado ajustado, el siguiente modelo de regresión lineal:
+
+$$
+Y_i \equiv R_i - R_f = \beta_0 + \beta_1x_i + \varepsilon_i, \quad i = 1, ..., n
+$$
+
+La estimación de los parámetros $\beta_0$ y $\beta_1$ no es solo relevante para predicción, si no que también porque tienen interpretaciones económicas importantes. En primer lugar, el modelo CAPM afirma que $\beta_0 = 0$. Luego, podemos estudiar esta hipótesis a partir de su distribución a posteriori. No solo eso, si no que también el modelo nos indica que en caso que $\beta_0 > 0$, entonces el activo está subvalorado, mientras que $\beta_0 < 0$ indica que el activo está sobrevalorado. Por último, el parámetro $\beta_1$ también es de interés ya que sirve como medida de riesgo.
+
+# Modelamiento
+
+En la práctica, normalmente para la variable aleatoria $\varepsilon_i$ se consideran distribuciones Normales o de colas pesadas, como la distribución t o una doble-exponencial. En este trabajo ampliaremos a distribuciones asimétricas, así como un enfoque de mezclas finitas.
+
+En cuanto a los datos, analizaremos los retornos de la empresa Enel en el periodo 2002-2020. En la Figura 2 se presentan estos retornos, donde notamos la existencia de algunos retornos inusualmente altos y bajos, lo cual nos sugiere que un enfoque diferente al normal sería adecuado. Por otro lado, pareciera ser que los retornos negativos suelen tener una mayor magnitud que los positivos, lo cual nos sugiere un enfoque asimétrico. Además, en la Figura 3 se ilustra la relación entre los retornos ajustados, donde notamos que efectivamente la relación parece ser lineal, como lo propone la teoría.
+
+```{r echo=FALSE}
+#| label: retornos ENEL
+#| layout-ncol: 2
+#| fig-subcap: 
+#|   - "Evolución de retornos de Enel"
+#|   - "Relación entre retornos ajustados"
+
+ENEL_ajustado <- retornos$ENEL - retornos$TBONOS
+mercado_ajustado <- retornos$IPSA - retornos$TBONOS
+
+adj_returns <- tibble(adj_ENEL = ENEL_ajustado,
+                      adj_market = mercado_ajustado)
+
+ggplot(retornos, aes(x = periodo, y = ENEL)) +
+  geom_line() +
+  labs(x = "Fecha", y = "Retorno",
+       title = "Evolución de retornos de ENEL",
+       subtitle = "Período 2002-2022") +
+  theme_minimal()
+
+ggplot(tibble(x = mercado_ajustado, y = ENEL_ajustado), aes(x, y)) +
+  geom_point() +
+  labs(x = "Retornos IPSA", y = "Retornos ENEL",
+       title = "Relación entre retornos de ENEL y retornos de mercado") +
+  theme_minimal()
+```
+
+Ya visto lo anterior, pasamos al ajuste del modelo, considerando diferentes distribuciones para $\varepsilon_i$.
+
+## Priori de Zellner
+
+En primer lugar, consideraremos el caso simple de asumir un modelo Normal de varianza constante. Para la especificación de la priori utilizaremos la propuesta de Zellner [@de_finetti_bayesian_1986], con una pequeña modificación para el parámetro de varianza. En particular,
+
+$$
+\begin{aligned}
+  Y_i &= \beta_0 + \beta_1x_i + \varepsilon_i \\
+  \varepsilon_i | \sigma^2 &\sim \text{Normal}(0, \sigma^2) \\
+  \beta | \sigma^2, g & \sim \text{Normal}(b_0, g\sigma^2 \Sigma_0) \\
+  \sigma^2 &\sim \text{Scaled-Inv-}\chi^2(\nu_0, \sigma_0) \\
+  g &\sim \text{Gamma}(a, b)
+\end{aligned}
+$$
+donde notamos que usamos también una priori para $g$, en vez de considerarla como una constante.
+
+Para los parámetros de la priori se consideraron los siguientes valores: $b_0 = \hat{\beta}_{\text{OLS}}$, $\Sigma_0 = (X^TX)^{-1}$, $\sigma_0 = \hat{\sigma}_{\text{OLS}}$, $\nu_0 = 1$. Además, considerando que normalmente se utiliza $g=n$, con $n$ el número de datos, utilizamos $a = n$ y $b=1$.
+
+
+## Errores de colas pesadas
+
+Como segundo modelo consideramos una extensión al modelo anterior, que en vez de utilizar una distribución Normal para los errores, considera una distribución t-student. Para los grados de libertad del modelo agregamos también una priori. Nos queda entonces
+
+$$
+\begin{aligned}
+  Y_i &= \beta_0 + \beta_1x_i + \varepsilon_i \\
+  \varepsilon_i | \sigma^2, \nu &\sim t_\nu(0, \sigma) \\
+  \beta | \sigma^2, g & \sim \text{Normal}(b_0, g\sigma^2 \Sigma_0) \\
+  \sigma^2 &\sim \text{Scaled-Inv-}\chi^2(\nu_0, \sigma_0) \\
+  g &\sim \text{Gamma}(a, b) \\
+  \nu &\sim \text{Gamma}(c, d)
+\end{aligned}
+$$
+
+En este caso, para elegir los valores de $c$ y $d$, consideramos $c=2$ y $d=0.1$, utilizando información de estudios anteriores [@arellano-valle_portfolio_2010].
+
+## Errores asimétricos
+
+Para el modelo asimétrico consideraremos una distribución Skew-Normal, pero hay que tener algunos cuidados. Esta distribución considera tres parámetros, $\xi$, $w$ y $\alpha$, denominados de localización, escala y forma, respectivamente. Definiendo $\delta = \alpha/\sqrt{1 + \alpha^2}$, tenemos que, si $X \sim \text{Skew-Normal}(\xi, w, \alpha)$,
+
+\begin{itemize}
+  \item $\text{E}(X) = \xi + w\delta \sqrt{2/\pi}$
+  \item $\text{Var}(X) = w^2(1 - 2\delta^2/\pi)$
+\end{itemize}
+
+Luego, como $\varepsilon_i$ debe estar centrada en 0, debemos tomar obligatoriamente $\xi = -w\delta\sqrt{2/\pi}$. Además, para seguir la notación de la priori de Zellner, denotamos $\sigma^2 = \text{Var}(\varepsilon_i)$. Tenemos entonces el siguiente modelo:
+
+$$
+\begin{aligned}
+  Y_i &= \beta_0 + \beta_1x_i + \varepsilon_i \\
+  \varepsilon_i | w, \alpha &\sim \text{Skew-Normal}(\xi, w,  \alpha) \\
+  \beta | w, \alpha, g & \sim \text{Normal}(b_0, g\sigma^2 \Sigma_0) \\
+  g &\sim \text{Gamma}(a, b) \\
+  w &\sim \text{Gamma}(c, d) \\
+  p(\alpha) &\propto 1
+\end{aligned}
+$$
+
+Es importante notar que el parámetro $\alpha$ es bastante importante, ya que es el parámetro de asimetría. En particular, tenemos que si $\alpha = 0$ recuperamos la distribución normal, mientras que si $\alpha >0$ la distribución es sesgada a la derecha, y $\alpha<0$ indica sesgo a la izquierda.
+
+## Resultados y Comparación
+
+```{r, include=FALSE, cache=TRUE}
+#| label: ajuste modelos
+
+N <- nrow(adj_returns)
+X <- cbind(1, adj_returns$adj_market)
+
+## 1. Priori de Zellner
+lm_freq <- lm(adj_ENEL ~ adj_market, data = adj_returns)
+
+b0 <- lm_freq$coefficients
+Sigma0 <- solve(t(X) %*% X)
+nu0 <- 1
+sigma0 <- summary(lm_freq)$sigma
+a <- N
+b <- 1
+
+capm_zellner_data <- list(
+  K = 2, N = N, X = X, y = adj_returns$adj_ENEL,
+  b0 = b0, Sigma0 = Sigma0,
+  nu0 = nu0, sigma0 = sigma0,
+  a = a, b = b
+)
+
+fit_zellner <- rstan::stan(
+  "modelos/zellner.stan",
+  data = capm_zellner_data
+)
+
+## 2. Colas pesadas
+capm_colas_pesadas_data <- list(
+  K = 2,
+  N = N,
+  X = X,
+  y = adj_returns$adj_ENEL,
+  b0 = b0, Sigma0 = Sigma0,
+  nu0 = nu0, sigma0 = sigma0,
+  a = a, b = b, c = 2, d = 0.1
+)
+
+fit_t <- rstan::stan(
+  "modelos/colas_pesadas.stan",
+  data = capm_colas_pesadas_data
+)
+
+## 3. Colas asimétricas
+capm_asimetrico_data <- list(
+  K = 2,
+  N = N,
+  X = X,
+  y = adj_returns$adj_ENEL,
+  b0 = b0, Sigma0 = Sigma0,
+  a = a, b = b, c = 2, d = 1
+)
+
+fit_asimetrico <- rstan::stan(
+  "modelos/asimetrico.stan",
+  data = capm_asimetrico_data
+)
+```
+
+
+Ajustamos los tres modelos anteriores utilizando Stan [@carpenter_stan_2017], considerando 4 cadenas de 2000 iteraciones cada una, con un periodo de calentamiento de 1000 iteraciones. Además, para cada modelo obtuvimos réplicas de los datos, así como la log verosimilitud evaluada en las muestras, lo cual nos permitirá tanto chequear nuestros modelos como compararlos entre sí.
+
+En primer lugar, en las Figuras 4, 5 y 6 se presentan histogramas con los valores de $\hat{R}$ para los parámetros de cada cadena, así como las réplicas y log-verosimilitud. Vemos que no tenemos evidencia de no convergencia.
+
+
+```{r}
+#| label: rhat
+#| echo: false
+#| message: false
+#| fig-cap: 
+#|   - Modelo Normal
+#|   - Modelo t-student
+#|   - Modelo Skew-Normal
+#| layout-ncol: 3
+#| layout-nrow: 1
+
+bayesplot::mcmc_rhat_hist(rhat(fit_zellner))
+bayesplot::mcmc_rhat_hist(rhat(fit_t))
+bayesplot::mcmc_rhat_hist(rhat(fit_asimetrico))
+```
+
+En la Tabla 1 se presentan las estimaciones de cada parámetro de cada modelo, junto con sus correspondientes intervalos de credibilidad centrados de $95\%$.
+
+::: {#tbl-panel layout="[ [1], [1,1] ]"}
+| Parámetro | Media  | 2.5%  | 97.5% |
+|-----------|--------|-------|-------|
+| $\beta_0$   | -0.003 | -0.01 | 0.005 |
+| $\beta_1$   | 0.99   | 0.83  | 1.16  |
+| $\sigma$    | 0.055  | 0.05  | 0.061 |
+| $g$         | 209.2  | 181   | 237.9 |
+
+: Modelo Normal {#tbl-first}
+
+| Parámetro | Media  | 2.5%  | 97.5% |
+|-----------|--------|-------|-------|
+| $\beta_0$   | -0.002 | -0.01 | 0.005 |
+| $\beta_1$   | 1.03   | 0.88  | 1.16  |
+| $\sigma$    | 0.043  | 0.04  | 0.049 |
+| g           | 210    | 182.6 | 240.4 |
+| $\nu$       | 7.1    | 3.6   | 14.1  |
+
+: Modelo t-student {#tbl-second}
+
+| Parámetro | Media  | 2.5%  | 97.5% |
+|-----------|--------|-------|-------|
+| $\beta_0$   | -0.004 | -0.01 | 0.003 |
+| $\beta_1$   | 0.99   | 0.83  | 1.15  |
+| $\sigma$    | 0.055  | 0.05  | 0.061 |
+| g           | 210    | 182.9 | 238.5 |
+| $\alpha$    | -1.75  | -2.54 | -1.06 |
+
+: Modelo Skew-Normal {#tbl-third}
+
+Estimaciones a posteriori
+:::
+
+\newpage
+Notamos que:
+
+* En los tres modelos tenemos que el IC de $\beta_0$ contiene al 0, por lo que tenemos evidencia que las acciones de Enel no se encuentran ni subvaloradas ni sobrevaloradas. Así, no tenemos evidencia para decir que el modelo CAPM no se cumple.
+* Las estimaciones de $\sigma$ son casi idénticas entre el modelo Normal y Skew-Normal, pero para el modelo t-student obtenemos un valor ligeramente más bajo. Esto tiene sentido, ya que probablemente los modelos Normales deben inflar un poco la varianza para poder asignar mayor densidad a los extremos.
+* Las estimaciones de $g$ son similares. Notamos que en los tres casos se obtiene un número cercano al número de observaciones (211).
+* Para el parametró $\nu$ del modelo t-student, obtenemos una estimación de 7.1, lo cual nos da evidencia que al parecer sí sería correcto un modelo de colas pesadas. Igual, pareciera ser que el IC es poco estrecho, así que tendremos que ver si será necesario o no considerar colas pesadas al momento de comparar los modelos.
+* Por último, vemos que obtenemos un IC de $\alpha$ que no contiene al 0, con una estimación de -1.75. Así, tenemos también evidencia que los errores $\varepsilon_i$ efectivamente tienen un comportamiento asimétrico, como observamos anteriormente, con un sesgo a la izquierda.
+
+Ya teniendo nuestros modelos ajustados, nos gustaría compararlos entre sí. Para esto, utilizaremos PSIS-LOOCV [@vehtari_practical_2017], lo cual entrega resultados muy similares al WAIC, pero además entrega algunos diagnósticos. En la Tabla 2 se presentan los valores obtenidos para cada modelo.
+
+:::{tbl-loocv}
+|       | Modelo Normal | Modelo t | Modelo Skew-Normal |
+|-------|:-------------:|:--------:|:------------------:|
+| LOOCV | -610.8        | -522.2   | -621               | 
+
+: Comparación de los tres modelos ajustados
+:::
+
+Al igual que con el WAIC, se debe elegir el modelo con menor valor. En este caso, vemos entonces que el mejor modelo es el que considera errores asimétricos. De forma un poco contradictoria, vemos que el modelo t es el que peor ajusta. Por otro lado, es importante mencionar que los diagnósticos de los tres modelos entregan que hay una observación que podría dar problemas. Este valor corresponde al outlier que se logra apreciar en la parte de abajo de la Figura 3.
+
+## Model Checking
+
+Vimos entonces que el modelo que mejor ajusta es el Skew-Normal. Veamos ahora de forma un poco más profunda cómo ajusta este modelo, y si logramos encontrar algún indicio para seguir expandiendo nuestro modelo. En la Figura 7 se presentan la densidad estimada de los retornos junto con diferentes densidades estimadas a partir de 15 muestras de datos simulados. Notamos dos cosas: que el modelo no logra ajustar bien la observación lejana a la izquierda, y que al parecer deberíamos considerar alguna distribución para $\varepsilon_i$ que considere diferentes componentes.
+
+```{r, fig.height=2, fig.width=4.5}
+#| label: replicas
+#| echo: false
+#| message: false
+#| fig-cap: Réplicas del modelo junto a la densidad empírica (en azul oscuro)
+
+y_rep <- extract(fit_asimetrico)[["y_rep"]]
+ppc_dens_overlay(y = ENEL_ajustado, y_rep[1:15, ], alpha=0.9)
+```
+
+Lo anterior también podemos verificarlo con algunos estadísticos de prueba, presentados en la Figura 8. De la figura pareciera ser que tanto la media como la varianza son bien ajustadas por el modelo, pero que no logra ajustar bien el mínimos de los datos. En cuanto al máximo, el modelo tiende a subestimarlo, pero no parece ser un problema tan grave.
+
+```{r, echo=FALSE, message=FALSE, fig.cap="Comparación estadísticos de prueba entre los datos reales y las réplicas", fig.height=2.5}
+p1 <- ppc_stat(ENEL_ajustado, y_rep, stat = "mean")
+p2 <- ppc_stat(ENEL_ajustado, y_rep, stat = "sd")
+p3 <- ppc_stat(ENEL_ajustado, y_rep, stat = "min")
+p4 <- ppc_stat(ENEL_ajustado, y_rep, stat = "max")
+
+(p1 + p2) / (p3 + p4)
+```
+
+\newpage
+# Modelo de mezcla
+
+Vimos entonces que el modelo asimétrico es el que mejor ajusta, pero aún no logramos ajustar bien el mínimo de los retornos. Observando la Figura 7, podemos notar que quizás sea una buena idea modelar los retornos con una mezcla de componentes, dos en la parte central, y una a la izquierda para poder modelar mejor los retornos inusualmente bajos.
+
+Así, como última propuesta, propondremos un modelo de mezcla de normales de tres componentes. En particular se considera el siguiente modelo:
+
+$$
+\begin{aligned}
+  Y_i|\beta, \sigma^2 &\sim \sum_{j=1}^3 w_j \text{N}(\beta_0 + \beta_1 x_i + \mu_j, \sigma_j^2) \\
+  \beta &\sim \text{Normal}(b_0, \Sigma_0) \\
+  w_1 &\sim \text{Beta}(a, b) \\
+  \sigma_1^2, \sigma_2^2, \sigma_2^3 &\sim \text{Uniforme}(0, 0.1)
+\end{aligned}
+$$
+
+Acá es importante mencionar varias cosas con respecto a los parámetros y elección de valores:
+
+* El modelo considera solo $w_1$ ya que los otros dos pesos quedan completamente determinados por este valor. Uno de ellos queda determinado por la restricción que $w_1 + w_2 + w_3 = 1$, mientras que el otro valor queda determinado por la restricción que la media debe estar centrada en 0. En particular, se tiene:
+
+$$
+w_2 = \frac{\mu_3(1 - w_1) + \mu_1 w_1}{\mu_3 - \mu_2} \quad \text{y} \quad w_3 = 1 - w_2 - w_3
+$$
+
+* Los valores de $\mu$ son considerados fijos. En particular, utilizamos $\mu = (-0.1, -0.01, 0.05)$. La razón de esto es que al agregar estos parámetros el modelo se vuelve muy inestable. Esto ocurre ya que con la restricción de la media, junto con un posible peso muy pequeño, entonces el valor puede llegar a ser extremadamente grande. Esto trae problemas, ya que al simular réplicas entonces podemos obtener retornos gigantescos, lo cual no tiene sentido.
+
+```{r modelo mezcla, include=FALSE}
+fit_mezcla <- readRDS("fit_mezcla.rds")
+```
+
+Ajustamos el modelo y presentamos sus resultados en la Tabla 3. Notamos que los resultados para $\beta$ son casi idénticos que los modelos anteriores. Por otro lado, obtenemos que la primera componente tiene un peso muy pequeño, lo cual tiene sentido ya que es la que utilizamos para modelar los retornos inusualmente bajos. Por otro lado, la componente con mayor peso es la del medio.
+
+:::{tbl-mezcla}
+| Parámetro   | Media  | 2.5%   | 97.5% |
+|-------------|--------|--------|-------|
+| $\beta_0$   | -0.001 | -0.008 | 0.006 |
+| $\beta_1$   | 1.03   | 0.89   | 1.18  |
+| $\sigma_1$  | 0.06   | 0.02   | 0.09  |
+| $\sigma_2$  | 0.002  | 0.001  | 0.002 |
+| $\sigma_3$  | 0.003  | 0.001  | 0.006 |
+| $w_1$       | 0.009  | 0.002  | 0.02  |
+| $w_2$       | 0.81   | 0.78   | 0.83  |
+| $w_3$       | 0.18   | 0.17   | 0.2   |
+
+: Parámetros ajustados para el modelo de mezcla {#tbl-first}
+:::
+
+Con respecto al LOOCV, obtenemos en este caso un valor de -660.7. Notamos entonces que este modelo le gana a los tres modelos vistos anteriormente. Para verificar que ahora la falta de ajuste del modelo asimétrico fue mitigada, presentamos en las Figuras 9 y 10 una muestra de las densidades obtenidas con los datos simulados, así como los estadísticos de prueba, respectivamente. Notamos que ahora sí logramos ajustar bien tanto el mínimo como el máximo de las observaciones.
+
+```{r, fig.height=1.5, fig.width=3.7}
+#| label: replicas mezcla
+#| echo: false
+#| message: false
+#| fig-cap: Réplicas del modelo de mezcla junto a la densidad empírica (en azul oscuro)
+
+y_rep <- extract(fit_mezcla)[["y_rep"]]
+ppc_dens_overlay(y = ENEL_ajustado, y_rep[1:15, ], alpha=0.9)
+```
+
+```{r, echo=FALSE, message=FALSE, fig.cap="Comparación estadísticos de prueba entre los datos reales y las réplicas del modelo de mezcla", fig.height=3}
+p1 <- ppc_stat(ENEL_ajustado, y_rep, stat = "mean")
+p2 <- ppc_stat(ENEL_ajustado, y_rep, stat = "sd")
+p3 <- ppc_stat(ENEL_ajustado, y_rep, stat = "min")
+p4 <- ppc_stat(ENEL_ajustado, y_rep, stat = "max")
+
+(p1 + p2) / (p3 + p4)
+```
+
+# Conclusiones
+
+En este informe se presentó el modelo CAPM junto a una de sus implicancias que es de sumo interés tanto estadísticamente como económicamente. Para este modelo consideramos tres modelos diferentes, donde el que mejor ajustó fue el que consideraba una distribución Skew-Normal. Chequeando el modelo nos dimos cuenta que sería una buena idea considerar un modelo de mezclas finitas, tomando tres componentes. Se ajustó el modelo, obteniendo resultados similares a los modelos anteriores, pero que era superior que los demás al considerar las métricas de LOOCV y WAIC. Por último, vimos que esta estrategia de incluir componentes para casos extremos logra modelar correctamente nuestros datos.
+
+En cuanto a la interpretación económica, vimos que con todos los modelos no se logra rechazar el modelo de CAPM, concluyendo también que los precios de acciones de Enel se encuentran correctamente valorados.
+
+A priori, pienso que hay dos formas interesantes en que se podría extender el análisis anterior. La primera es considerar alguna distribución que considere tanto colas pesadas como asimetría, como la distribución Skew-t-generalizada. Por otro lado, para extender el modelo de mezcla, sería interesante extender a el caso no-paramétrico, tomando los errores como un DPM. Esta última opción creo que es bastante atractiva, ya que podríamos eliminar la restricción de las medias $\mu$ fijas, ya que entonces la elección se da automáticamente, normalmente eliminando las componentes con pesos extremadamente bajos.
+
+\newpage
+# Referencias
+
+---
+nocite: |
+  @*
+---
